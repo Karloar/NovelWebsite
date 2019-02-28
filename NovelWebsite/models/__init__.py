@@ -28,6 +28,9 @@ class NovelTitle(db.Model):
     author = db.Column(db.String(50))
     cover = db.Column(db.String(100))
     time = db.Column(db.DateTime)
+    url = db.Column(db.String(200), unique=True)
+    type_id = db.Column(db.Integer, db.ForeignKey("novel_type.id"))
+    novel_type = db.relationship("NovelType", backref="novel_titles")
 
 
 class NovelSection(db.Model):
@@ -44,3 +47,9 @@ class CrawlSettings(db.Model):
     __tablename__ = 'crawl_settings'
     id = db.Column(db.Integer, primary_key=True)
     crawl_time = db.Column(db.DateTime)
+
+
+class NovelType(db.Model):
+    __tablename__ = 'novel_type'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
