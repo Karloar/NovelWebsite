@@ -38,12 +38,28 @@ def get_section_title_and_url_from_titl_url(title_url):
     resp = requests.get(title_url, headers=headers)
     resp.encoding = 'utf-8'
     selector = etree.HTML(resp.text)
-    sections = selector.xpath("/html/body/div[5]/dl/dt[last()]/following-sibling::*")
+    sections = selector.xpath("/html/body/div[5]/dl/dt[2]/following-sibling::*")
+    cover_src = selector.xpath("/html/body/div[4]/div[2]/div[1]/img/@src")
     title_and_url_list = []
     for section in sections:
-        title = str(section.xpath("./a/text()")[0])
-        href = base_url + "/" + str(section.xpath("./a/@href")[0])
-        if not (title.startswith("正文") or title.startswith("第")):
+        title_node = section.xpath("./a/text()")
+        href_node = section.xpath("./a/@href")
+        if len(title_node) == 0 or len(href_node) == 0:
             continue
+        title = str(title_node[0])
+        href = base_url + "/" + str(href_node[0])
         title_and_url_list.append((title, href))
-    return title_and_url_list
+    return title_and_url_list, str(cover_src[0])
+
+
+def download_cover(img_src, file_name, chunk_size=None):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36"
+    }
+    resp = requests.get(url=img_src, stream=True, headers=headers)
+    with open(file_name, 'wb') as f:
+        if chunk_size and type(chunk_size) == int:
+            for chunk in resp.iter_content(chunk_size=chunk_size):
+                f.write(chunk)
+        else:
+            f.write(resp.content)

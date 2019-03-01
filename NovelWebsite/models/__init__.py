@@ -31,6 +31,7 @@ class NovelTitle(db.Model):
     url = db.Column(db.String(200), unique=True)
     type_id = db.Column(db.Integer, db.ForeignKey("novel_type.id"))
     novel_type = db.relationship("NovelType", backref="novel_titles")
+    read_num = db.Column(db.Integer, default='0')
 
 
 class NovelSection(db.Model):
