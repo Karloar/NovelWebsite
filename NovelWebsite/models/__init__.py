@@ -42,6 +42,7 @@ class NovelSection(db.Model):
     title = db.Column(db.String(200))
     content = db.Column(db.Text)
     time = db.Column(db.DateTime)
+    url = db.Column(db.String(100), unique=True)
 
 
 class CrawlSettings(db.Model):
