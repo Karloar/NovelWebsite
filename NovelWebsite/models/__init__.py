@@ -44,6 +44,10 @@ class NovelSection(db.Model):
     time = db.Column(db.DateTime)
     url = db.Column(db.String(100), unique=True)
 
+    __table_args__ = {
+        'mysql_charset': 'utf8mb4'
+    }
+
 
 class CrawlSettings(db.Model):
     __tablename__ = 'crawl_settings'

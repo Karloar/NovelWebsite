@@ -30,7 +30,7 @@ def get_novel_titles_from_url(url):
     return novel_title_list
 
 
-def get_section_title_and_url_from_titl_url(title_url):
+def get_section_title_and_url_from_title_url(title_url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36"
     }

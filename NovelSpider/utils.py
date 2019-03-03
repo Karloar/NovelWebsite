@@ -1,13 +1,21 @@
 import threading
 import requests
+import html
+import time
 from lxml import etree
 from datetime import datetime
 from NovelSpider import db
 from NovelSpider import NovelType
 from NovelSpider import NovelTitle
+from NovelSpider import NovelSection
 
 
 def get_novel_titles_from_url(url):
+    '''
+    从url中找到所有的小说标题
+    :param url:
+    :return:
+    '''
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36"
     }
@@ -31,7 +39,94 @@ def get_novel_titles_from_url(url):
     return novel_title_list
 
 
+def get_section_title_and_url_from_title_url(title_url):
+    '''
+    从当前小说页面获取所有的章节
+    :param title_url:
+    :return:
+    '''
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36"
+    }
+    base_url, _ = title_url.rsplit("/", maxsplit=1)
+    resp = requests.get(title_url, headers=headers)
+    resp.encoding = 'utf-8'
+    selector = etree.HTML(resp.text)
+    sections = selector.xpath("/html/body/div[5]/dl/dt[2]/following-sibling::*")
+    title_and_url_list = []
+    for section in sections:
+        title_node = section.xpath("./a/text()")
+        href_node = section.xpath("./a/@href")
+        if len(title_node) == 0 or len(href_node) == 0:
+            continue
+        title = str(title_node[0])
+        href = base_url + "/" + str(href_node[0])
+        title_and_url_list.append((title, href))
+    return title_and_url_list
+
+
+def get_cover_href_from_url(url):
+    '''
+    从小说title url中找到封面的url
+    :param url:
+    :return:
+    '''
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36"
+    }
+    resp = requests.get(url, headers=headers)
+    resp.encoding = 'utf-8'
+    selector = etree.HTML(resp.text)
+    cover_src = selector.xpath("/html/body/div[4]/div[2]/div[1]/img/@src")
+    return str(cover_src[0])
+
+
+def download_cover(cover_src, file_name, chunk_size=None):
+    '''
+    下载封面到指定目录
+    :param cover_src:
+    :param file_name:
+    :param chunk_size:
+    :return:
+    '''
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36"
+    }
+    resp = requests.get(url=cover_src, stream=True, headers=headers)
+    with open(file_name, 'wb') as f:
+        if chunk_size and type(chunk_size) == int:
+            for chunk in resp.iter_content(chunk_size=chunk_size):
+                f.write(chunk)
+        else:
+            f.write(resp.content)
+
+
+def get_section_content_from_url(section_url):
+    '''
+    根据章节
+    :param section_url:
+    :return:
+    '''
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36"
+    }
+
+    resp = requests.get(url=section_url, headers=headers)
+    resp.encoding = "utf-8"
+    selector = etree.HTML(resp.text)
+    contents = selector.xpath('//*[@id="content"]/text()')
+    contents = [html.escape(x.strip()) for x in contents]
+    return '<br />'.join(contents)
+
+
+content_lock = threading.Lock()
+
+
 class CrawlNovelTitleThread(threading.Thread):
+    '''
+    下载小说标题的线程类
+    '''
 
     def __init__(
             self,
@@ -74,3 +169,55 @@ class CrawlNovelTitleThread(threading.Thread):
             page += 1
         db.session.remove()
 
+
+class CrawlNovelSectionThread(threading.Thread):
+    '''
+    下载小说章节的线程, 若没有下载小说封面, 下载小说封面
+    '''
+    def __init__(self, novel_title_list: NovelTitle, cover_path, chunk=None, lock=False):
+        threading.Thread.__init__(self)
+        self.__novel_title_list = novel_title_list
+        self.__cover_path = cover_path
+        self.__chunk = chunk
+        self.__lock = lock
+
+    def run(self):
+        for novel_title in self.__novel_title_list:
+            try:
+                section_title_and_url_list = get_section_title_and_url_from_title_url(novel_title.url)
+                for title, url in section_title_and_url_list:
+                    if self.__lock:
+                        if content_lock.acquire():
+                            try:
+                                db.session.query(NovelSection).filter(NovelSection.url == url).one()
+                            except:
+                                content = get_section_content_from_url(url)
+                                db.session.add(NovelSection(
+                                    novel_id=novel_title.id,
+                                    title=title,
+                                    content=content,
+                                    url=url
+                                ))
+                                db.session.commit()
+                                print(threading.current_thread().getName(), '  ', novel_title.id, '  ',
+                                      novel_title.name, '  ', title, '  ', url)
+                                # time.sleep(1)
+                            content_lock.release()
+                    else:
+                        try:
+                            db.session.query(NovelSection).filter(NovelSection.url == url).one()
+                        except:
+                            content = get_section_content_from_url(url)
+                            db.session.add(NovelSection(
+                                novel_id=novel_title.id,
+                                title=title,
+                                content=content,
+                                url=url
+                            ))
+                            db.session.commit()
+                            print(threading.current_thread().getName(), '  ', novel_title.id, '  ',
+                                  novel_title.name, '  ', title, '  ', url)
+                            time.sleep(1)
+            except Exception as e:
+                print(e, '  ', novel_title.url)
+        db.session.remove()

@@ -6,4 +6,4 @@ novel_type_list = ['玄幻魔法', '武侠修真', '都市言情', '历史军事
 
 if __name__ == '__main__':
     for novel_type in novel_type_list:
-        CrawlNovelTitleThread(novel_type).start()
+        CrawlNovelTitleThread(novel_type, date='2019-03-01').start()
