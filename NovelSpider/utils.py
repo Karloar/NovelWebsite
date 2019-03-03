@@ -195,7 +195,7 @@ class CrawlNovelSectionThread(threading.Thread):
                                 db.session.add(NovelSection(
                                     novel_id=novel_title.id,
                                     title=title,
-                                    content=content,
+                                    content=content.encode('utf-8'),
                                     url=url
                                 ))
                                 db.session.commit()
