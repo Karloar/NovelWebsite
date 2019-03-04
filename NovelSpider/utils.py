@@ -206,17 +206,21 @@ class CrawlNovelSectionThread(threading.Thread):
                             try:
                                 db.session.query(NovelSection).filter(NovelSection.url == url).one()
                             except:
-                                content = get_section_content_from_url(url)
-                                db.session.add(NovelSection(
-                                    novel_id=novel_title.id,
-                                    title=title,
-                                    content=content.encode('utf-8'),
-                                    url=url
-                                ))
-                                db.session.commit()
-                                print(threading.current_thread().getName(), '  ', novel_title.id, '  ',
-                                      novel_title.name, '  ', title, '  ', url)
-                                # time.sleep(1)
+                                try:
+                                    content = get_section_content_from_url(url)
+                                    db.session.add(NovelSection(
+                                        novel_id=novel_title.id,
+                                        title=title,
+                                        content=content.encode('utf-8'),
+                                        url=url
+                                    ))
+                                    db.session.commit()
+                                    print(threading.current_thread().getName(), '  ', novel_title.id, '  ',
+                                          novel_title.name, '  ', title, '  ', url)
+                                    # time.sleep(1)
+                                except Exception as e:
+                                    print(e)
+                                    break
                             content_lock.release()
                     else:
                         try:
