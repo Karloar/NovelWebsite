@@ -81,6 +81,23 @@ def get_cover_href_from_url(url):
     return str(cover_src[0])
 
 
+def get_introduction_from_title_url(url):
+    '''
+    从小说title url中找到简介
+    :param url:
+    :return:
+    '''
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36"
+    }
+    resp = requests.get(url, headers=headers)
+    resp.encoding = 'utf-8'
+    selector = etree.HTML(resp.text)
+    introduction = selector.xpath("/html/body/div[4]/div[2]/div[3]/text()")
+    introduction = [html.escape(x).strip() for x in introduction if x.strip()]
+    return '<br />'.join(introduction)
+
+
 def download_cover(cover_src, file_name, chunk_size=None):
     '''
     下载封面到指定目录
@@ -116,7 +133,7 @@ def get_section_content_from_url(section_url):
     resp.encoding = "utf-8"
     selector = etree.HTML(resp.text)
     contents = selector.xpath('//*[@id="content"]/text()')
-    contents = [html.escape(x.strip()) for x in contents]
+    contents = [html.escape(x).strip() for x in contents if x.strip()]
     return '<br />'.join(contents)
 
 
@@ -174,11 +191,9 @@ class CrawlNovelSectionThread(threading.Thread):
     '''
     下载小说章节的线程, 若没有下载小说封面, 下载小说封面
     '''
-    def __init__(self, novel_title_list: NovelTitle, cover_path, chunk=None, lock=False):
+    def __init__(self, novel_title_list: NovelTitle, lock=False):
         threading.Thread.__init__(self)
         self.__novel_title_list = novel_title_list
-        self.__cover_path = cover_path
-        self.__chunk = chunk
         self.__lock = lock
 
     def run(self):

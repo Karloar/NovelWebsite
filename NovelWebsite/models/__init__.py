@@ -28,6 +28,7 @@ class NovelTitle(db.Model):
     author = db.Column(db.String(50))
     cover = db.Column(db.String(100))
     time = db.Column(db.DateTime)
+    introduction = db.Column(db.String(200))
     url = db.Column(db.String(200), unique=True)
     type_id = db.Column(db.Integer, db.ForeignKey("novel_type.id"))
     novel_type = db.relationship("NovelType", backref="novel_titles")
