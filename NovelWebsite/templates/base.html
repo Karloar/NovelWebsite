@@ -1,8 +1,138 @@
 {% extends "bootstrap/base.html" %}
 {% block styles %}
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" rel="stylesheet" />
 {% endblock %}
 {% block scripts %}
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script type="text/javascript" src="/static/js/base.js"></script>
+{% endblock %}
+{% block navbar %}
+    <div class="container">
+        <nav class="navbar navbar-default" style="height: 86px;">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/">
+                <img alt="Brand" src="/static/img/brand.png" style="width: 201px;">
+              </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="padding: 20px;">
+              <form class="navbar-form navbar-left" style="padding-left: 25%">
+                <div class="form-group">
+                  <input type="text" class="form-control" placeholder="小说名称、作者" style="width: 300px">
+                </div>
+                <button type="submit" class="btn btn-info" style="width: 100px">搜索</button>
+              </form>
+              <ul class="nav navbar-nav navbar-right">
+                <li>
+                  <a href="javascript:void(0);" id="index-modal-user-login-button">
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                    <strong>登录|注册</strong>
+                  </a>
+                </li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+        <ul class="nav nav-tabs nav-justified">
+            {% if not data['type_id'] %}
+                <li role="presentation" class="active"><a href="/">主页</a></li>
+            {% else %}
+                <li role="presentation"><a href="/">主页</a></li>
+            {% endif %}
+            {% for category in data['type_list'] %}
+                {% if data['type_id'] and data['type_id'] == category.id %}
+                    <li role="presentation"  class="active"><a href="/category/{{ category.id }}">{{ category.name }}</a></li>
+                {% else %}
+                    <li role="presentation"><a href="/category/{{ category.id }}">{{ category.name }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+        </ul>
+    </div>
+
+<!-- *************************   登录模态框    	****************************** -->
+<div class="modal fade" id="index-modal-login">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <ul class="nav nav-tabs">
+		  <li role="presentation" class="active" id="index-modal-login-login"><a href="#"><strong>登录</strong></a></li>
+		  <li role="presentation" id="index-modal-login-regist"><a href="#"><strong>注册</strong></a></li>
+		</ul>
+      </div>
+      <div class="modal-body">
+        <form>
+        	  <div class="form-group index-modal">
+			    <input type="text" class="form-control" id="index-modal-login-username" placeholder="用户名">
+			  </div>
+			  <div class="form-group index-modal">
+			    <input type="password" class="form-control" id="index-modal-login-password" placeholder="密码">
+			  </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">登录</button>
+        <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- *************************   注册模态框    	****************************** -->
+<div class="modal fade" id="index-modal-regist">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <ul class="nav nav-tabs">
+		  <li role="presentation" class="active" id="index-modal-regist-login"><a href="#"><strong>登录</strong></a></li>
+		  <li role="presentation" id="index-modal-regist-regist"><a href="#"><strong>注册</strong></a></li>
+		</ul>
+      </div>
+      <div class="modal-body">
+        <form>
+        	  <div class="form-group index-modal">
+			    <input type="text" class="form-control" id="index-modal-regist-username" placeholder="用户名">
+			  </div>
+			  <div class="form-group index-modal">
+			    <input type="password" class="form-control" id="index-modal-regist-password" placeholder="密码">
+			  </div>
+			  <div class="form-group index-modal">
+			    <input type="password" class="form-control" id="index-modal-regist-repassword" placeholder="确认密码">
+			  </div>
+			  <div class="form-group index-modal">
+			    <input type="email" class="form-control" id="index-modal-regist-emal" placeholder="邮箱">
+			  </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">注册</button>
+        <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% endblock %}
+
+{% block content %}
+
+<div class="footer">
+    <footer class="navbar-fixed-bottom">
+        <div class="container" style="text-align: center">
+            Copyright My Website 2019. All Rights Reserved.
+        </div>
+    </footer>
+</div>
 {% endblock %}
