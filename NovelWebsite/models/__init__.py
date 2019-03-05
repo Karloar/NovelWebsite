@@ -10,15 +10,14 @@ class User(db.Model):
     name = db.Column(db.String(30))
     password = db.Column(db.String(30))
     email = db.Column(db.String(100))
+    user_collections = db.relationship("UserCollection", backref="user", lazy='dynamic')
 
 
 class UserCollection(db.Model):
     __tablename__ = 'user_collection'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    user = db.relationship("User", backref="user_collections")
     novel_title_id = db.Column(db.Integer, db.ForeignKey("novel_title.id"))
-    novel_title = db.relationship("NovelTitle", backref="user_collections")
 
 
 class NovelTitle(db.Model):
@@ -31,15 +30,15 @@ class NovelTitle(db.Model):
     introduction = db.Column(db.String(200))
     url = db.Column(db.String(200), unique=True)
     type_id = db.Column(db.Integer, db.ForeignKey("novel_type.id"))
-    novel_type = db.relationship("NovelType", backref="novel_titles")
     read_num = db.Column(db.Integer, default='0')
+    novel_sections = db.relationship("NovelSection", backref="novel_title", lazy='dynamic')
+    user_collections = db.relationship("UserCollection", backref="novel_title", lazy='dynamic')
 
 
 class NovelSection(db.Model):
     __tablename__ = 'novel_section'
     id = db.Column(db.Integer, primary_key=True)
     novel_id = db.Column(db.Integer, db.ForeignKey("novel_title.id"))
-    novel_title = db.relationship("NovelTitle", backref="novel_sections")
     title = db.Column(db.String(200))
     content = db.Column(db.Text)
     time = db.Column(db.DateTime)
@@ -60,3 +59,4 @@ class NovelType(db.Model):
     __tablename__ = 'novel_type'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
+    novel_titles = db.relationship("NovelTitle", backref="novel_type", lazy='dynamic')

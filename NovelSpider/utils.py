@@ -93,7 +93,7 @@ def get_introduction_from_title_url(url):
     resp = requests.get(url, headers=headers)
     resp.encoding = 'utf-8'
     selector = etree.HTML(resp.text)
-    introduction = selector.xpath("/html/body/div[4]/div[2]/div[3]/text()")
+    introduction = selector.xpath("/html/body/div[4]/div[2]/div[3]/text()")[:-1]
     introduction = [html.escape(x).strip() for x in introduction if x.strip()]
     return '<br />'.join(introduction)
 

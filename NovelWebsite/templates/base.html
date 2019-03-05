@@ -2,6 +2,7 @@
 {% block styles %}
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon" />
 {% endblock %}
 {% block scripts %}
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
@@ -129,7 +130,7 @@
 {% block content %}
 
 <div class="footer">
-    <footer class="navbar-fixed-bottom">
+    <footer class="navbar">
         <div class="container" style="text-align: center">
             Copyright My Website 2019. All Rights Reserved.
         </div>

@@ -1,10 +1,132 @@
 {% extends "base.html" %}
-{% block title %}个人小说网主页{% endblock %}
+{% block title %}个人小说网--主页{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="page-header">
-        <h1>Hello, {{ name }}!</h1>
+    <div class="row">
+        <div class="col-md-12">
+            &nbsp;&nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-info" style="height: 450px;">
+                <div class="panel-body">
+                    <div class="row">
+                        {% for novel in data['suggestion_list'][:4] %}
+                            <div class="col-md-6" >
+                                <div class="panel panel-success" style="height: 200px; overflow: hidden;">
+                                    <div class="panel-body">
+                                        <div class="col-md-6" style="padding: 0px;">
+                                            <a href="/novel/{{ novel.id }}">
+                                                <img src="{{ novel.cover }}" alt="{{ novel.name }}" class="img-rounded" style="width:124px; height:154px;">
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6" style="padding: 0px;">
+                                            <dl>
+                                                <dt><a href="/novel/{{ novel.id }}">{{ novel.name }}</a> <span style="float:right">{{ novel.author }}</span></dt>
+                                                <ul class="nav nav-list"><li class="divider"></li></ul>
+                                                <dd>{{ novel.introduction | safe }}</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-info" style="height: 450px;">
+                <div class="panel-heading">强烈推荐</div>
+                <div class="panel-body">
+                    <ul class="list-unstyled">
+                        {% for novel in data['suggestion_list'] %}
+                        <li>[{{ novel.type_name }}]<a href="/novel/{{ novel.id }}">{{ novel.name }}</a><span style="float: right;">{{ novel.author}}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info" style="height: 700px;">
+                <div class="panel-body">
+                    {% for category in data['type_list'] %}
+                    <div class="col-md-3" style="padding: 0px;margin:0px;">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">{{ category.name }}</div>
+                            <div class="panel-body" style="height: 280px;">
+                                    {% for novel in data['category_novel_list'][category.id] %}
+                                        {% if loop.index == 1 %}
+                                            <div class="row" style="height: 103px;overflow: hidden;">
+                                                <div class="col-md-4">
+                                                    <a href="/novel/{{ novel.id }}"><img src="{{ novel.cover }}" alt="{{ novel.name }}" class="img-rounded" style="width:71px; height:86px;"></a>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <dl>
+                                                        <dt><a href="/novel/{{ novel.id }}">{{ novel.name }}</a></dt>
+                                                        <ul class="nav nav-list"><li class="divider"></li></ul>
+                                                        <dd>{{ novel.introduction | safe if novel.introduction }}</dd>
+                                                    </dl>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <table class="table table-condensed table-hover">
+                                        {% else %}
+                                                    <tr>
+                                                        <td style=" white-space:nowrap">
+                                                            <a href="/novel/{{ novel.id }}">{{ novel.name }}</a>/{{ novel.author}}
+                                                        </td>
+                                                    </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                                </table>
+                                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-info" style="height: 690px;">
+                <div class="panel-heading">最新更新小说列表</div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        {% for novel in data['last_update_novel_list'] %}
+                        <tr>
+                            <td>[{{ novel.type_name }}]</td>
+                            <td><a href="/novel/{{ novel.title_id }}">{{ novel.title_name }}</a></td>
+                            <td><a href="/detail/{{ novel.section_id }}">{{ novel.section_name}}</a></td>
+                            <td>{{ novel.author }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-info" style="overflow: hidden; height: 690px;">
+                <div class="panel-heading">最近入库小说</div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        {% for novel in data['last_append_novel_list'] %}
+                        <tr>
+                            <td style=" white-space:nowrap;">[{{ novel.type_name }}]&nbsp;
+                            <a href="/novel/{{ novel.title_id }}">{{ novel.title_name }}</a>&nbsp;
+                            {{ novel.author }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {{ super() }}
