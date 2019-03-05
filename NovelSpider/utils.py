@@ -198,6 +198,8 @@ class CrawlNovelSectionThread(threading.Thread):
 
     def run(self):
         for novel_title in self.__novel_title_list:
+            if novel_title.id in [35, 77]:
+                continue
             try:
                 section_title_and_url_list = get_section_title_and_url_from_title_url(novel_title.url)
                 for title, url in section_title_and_url_list:
