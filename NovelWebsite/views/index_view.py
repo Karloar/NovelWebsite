@@ -118,7 +118,7 @@ def novel(novel_id):
     ).order_by(NovelTitle.read_num.desc(), NovelTitle.id.asc()).limit(5)
     data['novel_sections_new'] = db.session.query(
         NovelSection
-    ).filter(NovelSection.novel_id == novel_id).order_by(NovelSection.id.desc()).limit(6)
+    ).filter(NovelSection.novel_id == novel_id).order_by(NovelSection.id.desc()).limit(12)
     db.session.remove()
     return render_template("novel.html", data=data)
 

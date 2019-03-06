@@ -40,16 +40,16 @@
     </div>
     <div class="row">
         <div class="col-md-8">
-            <div class="panel panel-info" style="height: 910px;">
+            <div class="panel panel-info" style="height: 910px; overflow: hidden;">
                 <div class="panel-heading">{{ data['type_name'] }}小说更新列表</div>
                 <div class="panel-body">
                     <table class="table table-condensed">
                         {% for novel in data['last_update_novel_list'] %}
                         <tr>
-                            <td>[{{ novel.type_name }}]</td>
-                            <td><a href="/novel/{{ novel.title_id }}">{{ novel.title_name }}</a></td>
-                            <td><a href="/detail/{{ novel.section_id }}">{{ novel.section_name}}</a></td>
-                            <td>{{ novel.author }}</td>
+                            <td style=" white-space:nowrap;">[{{ novel.type_name }}]</td>
+                            <td style=" white-space:nowrap;"><a href="/novel/{{ novel.title_id }}">{{ novel.title_name }}</a></td>
+                            <td style=" white-space:nowrap;"><a href="/detail/{{ novel.section_id }}">{{ novel.section_name}}</a></td>
+                            <td style=" white-space:nowrap;">{{ novel.author }}</td>
                         </tr>
                         {% endfor %}
                         <tr>
