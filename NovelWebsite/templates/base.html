@@ -46,7 +46,7 @@
           </div><!-- /.container-fluid -->
         </nav>
         <ul class="nav nav-tabs nav-justified">
-            {% if not data['type_id'] %}
+            {% if not data['type_id'] and data['index'] %}
                 <li role="presentation" class="active"><a href="/">主页</a></li>
             {% else %}
                 <li role="presentation"><a href="/">主页</a></li>
@@ -137,3 +137,82 @@
     </footer>
 </div>
 {% endblock %}
+
+{% macro pagination(current_page, total_page, base_url, page_radius=3) %}
+<nav aria-label="Page navigation" style="text-align: center;">
+    <ul class="pagination">
+        <li><a href="{{ base_url }}/1">首页</a></li>
+        <li>
+            <a href="{{ base_url }}/{{ current_page - 1 if current_page > 1 else 1 }}"
+               aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% if total_page < 2 * page_radius + 1 %}
+            {% for page in range(1, total_page+1) %}
+                {% if page == current_page %}
+                <li class="active"><a href="{{ base_url }}/{{ page }}">{{ page }}</a></li>
+                {% else %}
+                <li><a href="{{ base_url }}/{{ page }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+        {% elif current_page <= page_radius %}
+            {% for page in range(1, 2*page_radius+2) %}
+                {% if page == current_page %}
+                <li class="active"><a href="{{ base_url }}/{{ page }}">{{ page }}</a></li>
+                {% else %}
+                <li><a href="{{ base_url }}/{{ page }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+        {% elif current_page + page_radius >= total_page %}
+            {% for page in range(total_page-2*page_radius, total_page+1) %}
+                {% if page == current_page %}
+                <li class="active"><a href="{{ base_url }}/{{ page }}">{{ page }}</a></li>
+                {% else %}
+                <li><a href="{{ base_url }}/{{ page }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% for page in range(current_page-page_radius, current_page+page_radius+1) %}
+                {% if page == current_page %}
+                <li class="active"><a href="{{ base_url }}/{{ page }}">{{ page }}</a></li>
+                {% else %}
+                <li><a href="{{ base_url }}/{{ page }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+        {% endif  %}
+        <li>
+            <a href="{{ base_url }}/{{ current_page + 1 if current_page < total_page else total_page }}"
+               aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        <li><a href="{{ base_url }}/{{ total_page }}">尾页</a></li>
+    </ul>
+</nav>
+{% endmacro %}
+<!--<nav aria-label="Page navigation" style="text-align: center;">-->
+    <!--<ul class="pagination">-->
+        <!--<li><a href="/category/{{ data['type_id'] }}/1">首页</a></li>-->
+        <!--<li>-->
+            <!--<a href="/category/{{ data['type_id'] }}/{{ data['current_page'] - 1 if data['current_page'] > 1 else 1 }}"-->
+               <!--aria-label="Previous">-->
+                <!--<span aria-hidden="true">&laquo;</span>-->
+            <!--</a>-->
+        <!--</li>-->
+        <!--{% for page in data['page_label_num'] %}-->
+            <!--{% if page == data['current_page'] %}-->
+            <!--<li class="active"><a href="/category/{{ data['type_id'] }}/{{ page }}">{{ page }}</a></li>-->
+            <!--{% else %}-->
+            <!--<li><a href="/category/{{ data['type_id'] }}/{{ page }}">{{ page }}</a></li>-->
+            <!--{% endif %}-->
+        <!--{% endfor %}-->
+        <!--<li>-->
+            <!--<a href="/category/{{ data['type_id'] }}/{{ data['current_page'] + 1 if data['current_page'] < data['page_num'] else data['page_num'] }}"-->
+               <!--aria-label="Next">-->
+                <!--<span aria-hidden="true">&raquo;</span>-->
+            <!--</a>-->
+        <!--</li>-->
+        <!--<li><a href="/category/{{ data['type_id'] }}/{{ data['page_num'] }}">尾页</a></li>-->
+    <!--</ul>-->
+<!--</nav>-->

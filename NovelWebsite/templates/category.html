@@ -5,17 +5,77 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            第一行
+            &nbsp;&nbsp;
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            第二行
+            <div class="panel panel-info" style="height: 455px;">
+                <div class="panel-body">
+                    <div class="row">
+                        {% for novel in data['top_novels'] %}
+                        <div class="col-md-4" >
+                                <div class="panel panel-success" style="height: 200px; overflow: hidden;">
+                                    <div class="panel-body">
+                                        <div class="col-md-6" style="padding: 0px;">
+                                            <a href="/novel/{{ novel.id }}">
+                                                <img src="{{ novel.cover }}" alt="{{ novel.name }}" class="img-rounded" style="width:124px; height:154px;">
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6" style="padding: 0px;">
+                                            <dl>
+                                                <dt><a href="/novel/{{ novel.id }}">{{ novel.name }}</a> <span style="float:right">{{ novel.author }}</span></dt>
+                                                <ul class="nav nav-list"><li class="divider"></li></ul>
+                                                <dd>{{ novel.introduction | safe if novel.introduction }}</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            第三行
+        <div class="col-md-8">
+            <div class="panel panel-info" style="height: 910px;">
+                <div class="panel-heading">{{ data['type_name'] }}小说更新列表</div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        {% for novel in data['last_update_novel_list'] %}
+                        <tr>
+                            <td>[{{ novel.type_name }}]</td>
+                            <td><a href="/novel/{{ novel.title_id }}">{{ novel.title_name }}</a></td>
+                            <td><a href="/detail/{{ novel.section_id }}">{{ novel.section_name}}</a></td>
+                            <td>{{ novel.author }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="4">
+                                {{ pagination(data['current_page'], data['page_num'], '/category/'+ data['type_id'] | string, 4) }}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-info" style="overflow: hidden; height: 910px;">
+                <div class="panel-heading">{{ data['type_name'] }}小说相关推荐</div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        {% for novel in data['recommend_novel_list'] %}
+                        <tr>
+                            <td style=" white-space:nowrap;">[{{ novel.type_name }}]&nbsp;
+                            <a href="/novel/{{ novel.title_id }}">{{ novel.title_name }}</a>&nbsp;
+                            {{ novel.author }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

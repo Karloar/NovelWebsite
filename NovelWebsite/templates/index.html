@@ -26,7 +26,7 @@
                                             <dl>
                                                 <dt><a href="/novel/{{ novel.id }}">{{ novel.name }}</a> <span style="float:right">{{ novel.author }}</span></dt>
                                                 <ul class="nav nav-list"><li class="divider"></li></ul>
-                                                <dd>{{ novel.introduction | safe }}</dd>
+                                                <dd>{{ novel.introduction | safe if novel.introduction }}</dd>
                                             </dl>
                                         </div>
                                     </div>

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}个人小说网--{{ data['novel'].title_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            &nbsp;&nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info" style="height: 300px;">
+                <div class="panel-heading">
+                    <a href="/">主页</a> &gt; <a href="/novel/{{ data['novel'].title_id }}">{{ data['novel'].title_name }}</a>
+                </div>
+                <div class="panel-body">
+                    <div class="row" style="margin: 10px;">
+                        <div class="panel panel-success">
+                            <div class="panel-body">
+                                <div class="col-md-2">
+                                    <img src="{{ data['novel'].cover }}" alt="{{ data['novel'].title_name }}" class="img-rounded" style="width:134px; height:164px;">
+                                </div>
+                                <div class="col-md-10">
+                                    <dl>
+                                        <dt style="font-size: 20px;">{{ data['novel'].title_name }}</dt>
+                                        <dd style="font-size: 15px;">作者：{{ data['novel'].author }}</dd>
+                                        <dd style="font-size: 15px;">分类：{{ data['novel'].type_name }}</dd>
+                                        <dd style="font-size: 15px;">简介：{{ data['novel'].introduction | safe if data['novel'].introduction }}</dd>
+                                        <dd style="font-size: 15px;">&nbsp;</dd>
+                                        <dd>相关推荐：
+                                            {% for novel in data['recommend_novel_list'] %}
+                                            <a href="/novel/{{ novel.id }}">{{ novel.name }}</a>&nbsp;
+
+                                            {% endfor %}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading" style="text-align: center">《{{ data['novel'].title_name }}》最新章节</div>
+                        <div class="panel-body">
+                            <div class="row" style="margin: 10px;">
+                                <table class="table table-condensed" style="margin: 0px;">
+                                        {% for novel_section in data['novel_sections_new'] %}
+                                            {% if loop.index % 3 == 1 %}
+                                        <tr>
+                                            {% endif %}
+                                            <td>
+                                                <a href="/detail/{{ novel_section.id }}">{{ novel_section.title }}</a>
+                                            </td>
+                                            {% if loop.index % 3 == 0 %}
+                                        </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading" style="text-align: center">《{{ data['novel'].title_name }}》正文</div>
+                        <div class="panel-body">
+                            <div class="row" style="margin: 10px;">
+                                <table class="table table-condensed table-striped" style="margin: 0px;">
+                                        {% for novel_section in data['novel_sections'] %}
+                                            {% if loop.index % 3 == 1 %}
+                                        <tr>
+                                            {% endif %}
+                                            <td>
+                                                <a href="/detail/{{ novel_section.id }}">{{ novel_section.title }}</a>
+                                            </td>
+                                            {% if loop.index % 3 == 0 %}
+                                        </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ super() }}
+{% endblock %}
