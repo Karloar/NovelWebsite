@@ -150,7 +150,7 @@ def detail(section_id):
     db.session.remove()
     if 'content_style' in session:
         data['content_style'] = session['content_style']
-        temp_list = [];
+        temp_list = []
         for k, v in session['content_style'].items():
             temp_list.append('{0}: {1};'.format(k, v))
         data['content_style_str'] = ''.join(temp_list)
@@ -174,6 +174,16 @@ def detail(section_id):
         ("23pt", "23pt"), ("25pt", "25pt"),
         ("27pt", "27pt"), ("30pt", "30pt"),
     ]
+
+    novel_title = data['section'].novel_title
+    if 'novel_' + str(novel_title.id) not in session:
+        novel_title = data['section'].novel_title
+        novel_title.read_num += 1
+        db.session.query(NovelTitle).filter(
+            NovelTitle.id == novel_title.id
+        ).update({NovelTitle.read_num: novel_title.read_num})
+        db.session.commit()
+        session['novel_' + str(novel_title.id)] = 'true'
 
     return render_template("detail.html", data=data)
 
