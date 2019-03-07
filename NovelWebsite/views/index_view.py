@@ -195,3 +195,14 @@ def error_404(error):
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
     db.session.remove()
     return render_template("error_404.html", data=data)
+
+
+@index_view.route("/search/category/<int:category_id>/<int:page>", methods=['GET'])
+@index_view.route("/search/category/<int:category_id>", methods=['GET'])
+@index_view.route("/search/<int:page>", methods=['GET'])
+@index_view.route("/search", methods=['POST'])
+@error_processing
+def search(category_id=None, page=1):
+    data = dict()
+    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    return render_template('search.html', data=data)
