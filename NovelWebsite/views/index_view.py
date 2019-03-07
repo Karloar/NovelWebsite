@@ -1,5 +1,7 @@
 from flask import Blueprint
 from flask import render_template
+from flask import session
+from flask import request
 from ..models import db
 from ..models import NovelType
 from ..models import NovelTitle
@@ -115,7 +117,8 @@ def novel(novel_id):
         NovelSection
     ).filter(NovelSection.novel_id == novel_id).order_by(NovelSection.novel_id.asc())
     data['recommend_novel_list'] = db.session.query(NovelTitle).filter(
-        NovelTitle.type_id == data['novel'].type_id
+        NovelTitle.type_id == data['novel'].type_id,
+        NovelTitle.id != novel_id
     ).order_by(NovelTitle.read_num.desc(), NovelTitle.id.asc()).limit(5)
     data['novel_sections_new'] = db.session.query(
         NovelSection
@@ -127,4 +130,68 @@ def novel(novel_id):
 @index_view.route("/detail/<int:section_id>", methods=['GET'])
 @error_processing
 def detail(section_id):
-    return str(section_id)
+    data = dict()
+    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    data['section'] = db.session.query(NovelSection).filter(NovelSection.id == section_id).one()
+    data['content'] = [
+        x.strip() for x in data['section'].content.split('<br />') if x.strip() and (
+                "http://www.shuquge.com/" not in x and "请记住本书首发域名" not in x
+        )
+    ]
+    data['recommend_novel_list'] = db.session.query(NovelTitle).filter(
+        NovelTitle.id != data['section'].novel_title.id
+    ).order_by(NovelTitle.read_num.desc(), NovelTitle.id.asc()).limit(5)
+    section_id_list = [x.id for x in db.session.query(NovelSection.id).filter(
+        NovelSection.novel_id == data['section'].novel_title.id
+    ).order_by(NovelSection.id.asc())]
+    current = section_id_list.index(data['section'].id)
+    data['previous'] = section_id_list[current-1] if current else section_id_list[0]
+    data['next'] = section_id_list[current+1] if current < len(section_id_list)-1 else section_id_list[-1]
+    db.session.remove()
+    if 'content_style' in session:
+        data['content_style'] = session['content_style']
+        temp_list = [];
+        for k, v in session['content_style'].items():
+            temp_list.append('{0}: {1};'.format(k, v))
+        data['content_style_str'] = ''.join(temp_list)
+    data['font-family'] = [
+        ("", "字体"), ("", "默认"),
+        ("黑体", "黑体"), ("楷体_GB2312", "楷体"),
+        ("微软雅黑", "微软雅黑"), ("方正启体简体", "启体"),
+        ("宋体", "宋体")
+    ]
+    data['color'] = [
+        ("", "颜色"), ("", "默认"),
+        ("rgb(147, 112, 219)", "暗紫"), ("rgb(46, 139, 87)", "藻绿"),
+        ("rgb(47, 79, 79)", "深灰"), ("rgb(119, 136, 153)", "青灰"),
+        ("rgb(128, 0, 0)", "栗色"), ("rgb(106, 90, 205)", "青蓝"),
+        ("rgb(188, 143, 143)", "玫褐"), ("rgb(244, 164, 96)", "黄褐"),
+    ]
+    data['font-size'] = [
+        ("15pt", "大小"), ("15pt", "默认"),
+        ("11pt", "11pt"), ("13pt", "13pt"),
+        ("17pt", "17pt"), ("20pt", "20pt"),
+        ("23pt", "23pt"), ("25pt", "25pt"),
+        ("27pt", "27pt"), ("30pt", "30pt"),
+    ]
+
+    return render_template("detail.html", data=data)
+
+
+@index_view.route("/save_novel_content_style", methods=['GET'])
+@error_processing
+def save_novel_content_style():
+    session['content_style'] = {
+        'font-size': request.args.get('font-size', ''),
+        'font-family': request.args.get('font-family', ''),
+        'color': request.args.get('color', ''),
+    }
+    return "success"
+
+
+@index_view.errorhandler(404)
+def error_404(error):
+    data = dict()
+    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    db.session.remove()
+    return render_template("error_404.html", data=data)

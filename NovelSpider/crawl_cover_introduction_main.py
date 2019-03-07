@@ -6,7 +6,7 @@ from NovelSpider.utils import get_cover_href_from_url
 from NovelSpider.utils import get_introduction_from_title_url
 
 cover_path = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     'NovelWebsite',
     'static',
     'img',

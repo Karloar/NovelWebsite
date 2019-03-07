@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}{{ data['section'].novel_title.name }}--{{ data['section'].title }}{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    function set_content_style() {
+        var section_content = $("#section_content");
+        var content_font_family = $("#content_font_family");
+        var content_font_color = $("#content_font_color");
+        var content_font_size = $("#content_font_size");
+        var style = {
+           "font-family": content_font_family.val(),
+           "color": content_font_color.val(),
+           "font-size": content_font_size.val()
+        };
+        section_content.css(style);
+        $.ajax({url: '/save_novel_content_style', data: style});
+    }
+</script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            &nbsp;&nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <a href="/">主页</a>&nbsp;&gt;&nbsp;
+                            <a href="/novel/{{ data['section'].novel_title.id }}">{{ data['section'].novel_title.name }}</a>&nbsp;&gt;&nbsp;
+                            <a href="/detail/{{ data['section'].id }}">{{ data['section'].title }}</a>
+                        </div>
+                        <div class="col-md-1">
+                            <a href="#" class="btn btn-success btn-sm">加入书架</a>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-4" >
+                                    <select class="form-control input-sm col-lg-4" onchange="set_content_style();"
+                                            id="content_font_family">
+                                        {% for font_family in data['font-family'] %}
+                                            {% if data['content_style'] and data['content_style']['font-family'] == font_family[0] and font_family[0] != '' %}
+                                            <option value="{{ font_family[0] }}" selected="selected">{{ font_family[1] }}</option>
+                                            {% else %}
+                                            <option value="{{ font_family[0] }}">{{ font_family[1] }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control input-sm col-lg-4" onchange="set_content_style();"
+                                            id="content_font_color">
+                                        {% for color in data['color'] %}
+                                            {% if data['content_style'] and data['content_style']['color'] == color[0] and color[0] != '' %}
+                                            <option value="{{ color[0] }}" selected="selected">{{ color[1] }}</option>
+                                            {% else %}
+                                            <option value="{{ color[0] }}">{{ color[1] }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control input-sm col-lg-4" onchange="set_content_style();"
+                                            id="content_font_size">
+                                        {% for size in data['font-size'] %}
+                                            {% if data['content_style'] and data['content_style']['font-size'] == size[0] and size[0] != '15pt' %}
+                                            <option value="{{ size[0] }}" selected="selected">{{ size[1] }}</option>
+                                            {% else %}
+                                            <option value="{{ size[0] }}">{{ size[1] }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12" style="text-align: center;color:red; font-size: x-large;">
+                            <strong>{{ data['section'].title }}</strong>
+                        </div>
+                        <div class="col-md-12">
+                            &nbsp;
+                        </div>
+                        <div class="col-md-12" style="text-align: center; font-size: x-small;">
+                            推荐阅读：
+                            {% for novel in data['recommend_novel_list'] %}
+                            <a href="/novel/{{ novel.id }}">{{ novel.name }}</a>&nbsp;
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-12">
+                            <hr style="height: 1px;" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-success" style="margin: 15px;">
+                                <div class="panel-body" style="{{ data['content_style_str'] if data['content_style_str'] else 'font-size: 15pt' }}" id="section_content">
+                                    {% for row in data['content'] %}
+                                    &nbsp;&nbsp;&nbsp;&nbsp;{{ row }}<br /><br />
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pager">
+                                    <li><a href="/detail/{{ data['previous'] }}"><span aria-hidden="true">&larr;</span> 上一章</a></li>&nbsp;&nbsp;
+                                    <li><a href="/novel/{{ data['section'].novel_title.id }}">返回目录</a></li>&nbsp;&nbsp;
+                                    <li><a href="/detail/{{ data['next'] }}">下一章<span aria-hidden="true">&rarr;</span></a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ super() }}
+{% endblock %}
