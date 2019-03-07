@@ -79,7 +79,8 @@ def category(type_id, page=1):
         NovelTitle.name.label('title_name'),
         NovelTitle.author,
         NovelType.name.label('type_name'),
-        NovelSection.title.label("section_name")
+        NovelSection.title.label("section_name"),
+        NovelSection.id.label('section_id')
     ).join(NovelType, NovelSection).filter(NovelTitle.type_id == type_id).order_by(
         NovelSection.id.desc()
     ).offset(per_page * (page - 1)).limit(per_page)
