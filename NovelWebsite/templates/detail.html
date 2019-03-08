@@ -16,6 +16,17 @@
         section_content.css(style);
         $.ajax({url: '/save_novel_content_style', data: style});
     }
+    function change_page_by_keyboard() {
+        var previous_page = $("#previous_page");
+        var next_page = $("#next_page");
+        if (window.event.keyCode == 37) {
+            window.location.href = previous_page.attr("href");
+        }
+        if (window.event.keyCode == 39) {
+            window.location.href = next_page.attr("href");
+        }
+    }
+    document.onkeydown = change_page_by_keyboard;
 </script>
 {% endblock %}
 {% block content %}
@@ -109,9 +120,9 @@
                             </div>
                             <nav aria-label="Page navigation">
                                 <ul class="pager">
-                                    <li><a href="/detail/{{ data['previous'] }}"><span aria-hidden="true">&larr;</span> 上一章</a></li>&nbsp;&nbsp;
+                                    <li><a href="/detail/{{ data['previous'] }}" id="previous_page"><span aria-hidden="true">&larr;</span> 上一章</a></li>&nbsp;&nbsp;
                                     <li><a href="/novel/{{ data['section'].novel_title.id }}">返回目录</a></li>&nbsp;&nbsp;
-                                    <li><a href="/detail/{{ data['next'] }}">下一章<span aria-hidden="true">&rarr;</span></a></li>
+                                    <li><a href="/detail/{{ data['next'] }}" id="next_page">下一章<span aria-hidden="true">&rarr;</span></a></li>
                                 </ul>
                             </nav>
                         </div>
