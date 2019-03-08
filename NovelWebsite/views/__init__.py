@@ -1,5 +1,7 @@
+import hashlib
 from flask import abort
 from functools import wraps
+from settings import Config
 
 
 def error_processing(process_func):
@@ -17,6 +19,13 @@ def error_processing(process_func):
             abort(404)
         return value
     return inner_function
+
+
+def md5(message):
+    m2 = hashlib.md5(Config.MD5_KEY.encode('utf-8'))
+    m2.update(message.encode('utf-8'))
+    return m2.hexdigest()
+
 
 # def get_page_label_range(current_page, total_page, page_r=3):
 #     page_label_num = 2 * page_r + 1

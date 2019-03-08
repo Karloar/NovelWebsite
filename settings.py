@@ -6,3 +6,4 @@ class Config:
     SQLALCHEMY_POOL_SIZE = 20
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_COMMIT_TEARDOWN = True
+    MD5_KEY = 'novel_website'

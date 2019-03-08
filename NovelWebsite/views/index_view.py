@@ -17,6 +17,8 @@ index_view = Blueprint(__name__, 'index_view')
 @error_processing
 def index():
     data = dict()
+    if 'user' in session:
+        data['user'] = session['user']
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
     data['suggestion_list'] = db.session.query(
         NovelTitle.id,
@@ -61,6 +63,8 @@ def index():
 @error_processing
 def category(type_id, page=1):
     data = dict()
+    if 'user' in session:
+        data['user'] = session['user']
     per_page = 25
     data['current_page'] = page
     data['total'] = db.session.query(NovelSection.id).join(NovelTitle).filter(NovelTitle.type_id == type_id).count()
@@ -104,6 +108,8 @@ def category(type_id, page=1):
 @error_processing
 def novel(novel_id):
     data = dict()
+    if 'user' in session:
+        data['user'] = session['user']
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
     data['novel'] = db.session.query(
         NovelTitle.id.label('title_id'),
@@ -132,6 +138,8 @@ def novel(novel_id):
 @error_processing
 def detail(section_id):
     data = dict()
+    if 'user' in session:
+        data['user'] = session['user']
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
     data['section'] = db.session.query(NovelSection).filter(NovelSection.id == section_id).one()
     data['content'] = [
@@ -203,6 +211,8 @@ def save_novel_content_style():
 @index_view.errorhandler(404)
 def error_404(error):
     data = dict()
+    if 'user' in session:
+        data['user'] = session['user']
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
     db.session.remove()
     return render_template("error_404.html", data=data)
@@ -220,6 +230,8 @@ def first_search():
 @error_processing
 def search(category_id=None, page=1):
     data = dict()
+    if 'user' in session:
+        data['user'] = session['user']
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
     per_page = 20
     data['base_url'] = request.base_url.rsplit("/", maxsplit=1)[0]
