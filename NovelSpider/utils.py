@@ -65,6 +65,25 @@ def get_section_title_and_url_from_title_url(title_url):
     return title_and_url_list
 
 
+def get_title_from_title_url(title_url):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36"
+    }
+    resp = requests.get(title_url, headers=headers)
+    resp.encoding = 'utf-8'
+    selector = etree.HTML(resp.text)
+    name = selector.xpath("/html/body/div[4]/div[2]/h2/text()")[0]
+    type_name = selector.xpath("/html/body/div[4]/div[2]/div[2]/span[2]/text()")[0].split("：")[-1]
+    author = selector.xpath("/html/body/div[4]/div[2]/div[2]/span[1]/text()")[0].split("：")[-1]
+    novel_title = NovelTitle(
+        name=name,
+        author=author,
+        url=title_url,
+        type_id=db.session.query(NovelType).filter(NovelType.name == type_name).one().id
+    )
+    return novel_title
+
+
 def get_cover_href_from_url(url):
     '''
     从小说title url中找到封面的url
