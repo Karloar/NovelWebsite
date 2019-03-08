@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask import render_template
 from flask import session
 from flask import request
+from flask import redirect
 from ..models import db
 from ..models import NovelType
 from ..models import NovelTitle
@@ -207,12 +208,46 @@ def error_404(error):
     return render_template("error_404.html", data=data)
 
 
-@index_view.route("/search/category/<int:category_id>/<int:page>", methods=['GET'])
-@index_view.route("/search/category/<int:category_id>", methods=['GET'])
-@index_view.route("/search/<int:page>", methods=['GET'])
 @index_view.route("/search", methods=['POST'])
+@error_processing
+def first_search():
+    session['search_word'] = request.form['search_word']
+    return redirect("/search/1")
+
+
+@index_view.route("/search/category/<int:category_id>/<int:page>", methods=['GET'])
+@index_view.route("/search/<int:page>", methods=['GET'])
 @error_processing
 def search(category_id=None, page=1):
     data = dict()
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    per_page = 20
+    data['base_url'] = request.base_url.rsplit("/", maxsplit=1)[0]
+    data['current_page'] = page
+    if category_id:
+        data['search_results'] = db.session.query(NovelTitle).join(NovelType).filter(
+            NovelType.id == category_id,
+            db.or_(
+                NovelTitle.name.like('%{0}%'.format(session['search_word'])),
+                NovelTitle.author.like('%{0}%'.format(session['search_word'])))
+        ).order_by(NovelTitle.read_num.desc(), NovelTitle.id.asc()).offset((page - 1) * per_page).limit(per_page)
+        novel_num = db.session.query(NovelTitle).join(NovelType).filter(
+            NovelType.id == category_id,
+            db.or_(
+                NovelTitle.name.like('%{0}%'.format(session['search_word'])),
+                NovelTitle.author.like('%{0}%'.format(session['search_word'])))
+        ).count()
+    else:
+        data['search_results'] = db.session.query(NovelTitle).filter(
+            db.or_(
+                NovelTitle.name.like('%{0}%'.format(session['search_word'])),
+                NovelTitle.author.like('%{0}%'.format(session['search_word'])))
+        ).order_by(NovelTitle.read_num.desc(), NovelTitle.id.asc()).offset((page - 1) * per_page).limit(per_page)
+        novel_num = db.session.query(NovelTitle).filter(
+            db.or_(
+                NovelTitle.name.like('%{0}%'.format(session['search_word'])),
+                NovelTitle.author.like('%{0}%'.format(session['search_word'])))
+        ).count()
+    data['total_page'] = novel_num // per_page if novel_num % per_page == 0 else novel_num // per_page + 1
+    db.session.remove()
     return render_template('search.html', data=data)

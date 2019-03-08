@@ -11,7 +11,55 @@
         <div class="col-md-12">
             <div class="panel panel-info">
                 <div class="panel-heading">搜索结果</div>
-                <div class="panel-body"></div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="/search/1">全部类型</a>&nbsp;&nbsp;
+                            {% for novel_type in data['type_list'] %}
+                                <a href="/search/category/{{ novel_type.id }}/1">{{ novel_type.name }}</a>&nbsp;
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            &nbsp;&nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-success">
+                                <table class="table">
+                                    <tbody>
+                                        {% for novel_title in data['search_results'] %}
+                                        <tr>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-md-2" style="text-align: center;">
+                                                        <a href="/novel/{{ novel_title.id }}">
+                                                            <img src="{{ novel_title.cover }}" alt="{{ novel_title.name }}" class="img-rounded" style="width:114px; height:144px;">
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <dl>
+                                                            <dt style="font-size: 20px;"><a href="/novel/{{ novel_title.id }}">{{ novel_title.name }}</a></dt>
+                                                            <dd style="font-size: 15px;">作者：{{ novel_title.author }}</dd>
+                                                            <dd style="font-size: 15px;">分类：{{ novel_title.novel_type.name }}</dd>
+                                                            <dd style="font-size: 15px;">简介：{{ novel_title.introduction | safe if novel_title.introduction }}</dd>
+                                                        </dl>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td>{{ pagination(data['current_page'], data['total_page'], data['base_url'], 4) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

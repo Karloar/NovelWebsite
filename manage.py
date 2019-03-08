@@ -15,6 +15,7 @@ migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 
 
+@app.errorhandler(405)
 @app.errorhandler(404)
 def error_404(error):
     data = dict()
