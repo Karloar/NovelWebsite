@@ -182,12 +182,12 @@
             {% endfor %}
         {% endif  %}
         <li>
-            <a href="{{ base_url }}/{{ current_page + 1 if current_page < total_page else total_page }}"
+            <a href="{{ base_url }}/{{ current_page + 1 if current_page < total_page else total_page if total_page else 1 }}"
                aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
-        <li><a href="{{ base_url }}/{{ total_page }}">尾页</a></li>
+        <li><a href="{{ base_url }}/{{ total_page if total_page else 1 }}">尾页</a></li>
     </ul>
 </nav>
 {% endmacro %}
