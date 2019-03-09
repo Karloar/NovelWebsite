@@ -210,58 +210,41 @@ class CrawlNovelSectionThread(threading.Thread):
     '''
     下载小说章节的线程, 若没有下载小说封面, 下载小说封面
     '''
-    def __init__(self, novel_title_list: NovelTitle, lock=False):
+    def __init__(self, novel_title_list: NovelTitle, lock=False, ignore_list=None):
         threading.Thread.__init__(self)
         self.__novel_title_list = novel_title_list
         self.__lock = lock
+        self.__ignore_list = ignore_list
 
     def run(self):
         for novel_title in self.__novel_title_list:
-            if novel_title.id in [35, 77, 93, 181, 270]:
+            if self.__ignore_list and novel_title.id in self.__ignore_list:
                 continue
             try:
-                section_title_and_url_list = get_section_title_and_url_from_title_url(novel_title.url)
-                for title, url in section_title_and_url_list:
-                    if self.__lock:
-                        if content_lock.acquire():
-                            try:
-                                db.session.query(NovelSection).filter(NovelSection.url == url).one()
-                            except:
-                                try:
-                                    content = get_section_content_from_url(url)
-                                    db.session.add(NovelSection(
-                                        novel_id=novel_title.id,
-                                        title=title,
-                                        content=content.encode('utf-8'),
-                                        url=url
-                                    ))
-                                    db.session.commit()
-                                    print(threading.current_thread().getName(), '  ', novel_title.id, '  ',
-                                          novel_title.name, '  ', title, '  ', url)
-                                    # time.sleep(1)
-                                except Exception as e:
-                                    print(e)
-                                    break
-                            content_lock.release()
-                    else:
+                section_title_list = get_section_title_and_url_from_title_url(novel_title.url)
+                for section_title, section_url in section_title_list:
+                    if content_lock.acquire():
                         try:
-                            db.session.query(NovelSection).filter(NovelSection.url == url).one()
-                        except:
+                            db.session.query(NovelSection).filter(NovelSection.url == section_url).one()
+                        except Exception as _:
+                            # print(e)
                             try:
-                                content = get_section_content_from_url(url)
+                                section_content = get_section_content_from_url(section_url)
                                 db.session.add(NovelSection(
-                                    novel_id=novel_title.id,
-                                    title=title,
-                                    content=content.encode('utf-8'),
-                                    url=url
+                                    title=section_title,
+                                    content=section_content.encode('utf-8'),
+                                    url=section_url,
+                                    novel_id=novel_title.id
                                 ))
                                 db.session.commit()
                                 print(threading.current_thread().getName(), '  ', novel_title.id, '  ',
-                                      novel_title.name, '  ', title, '  ', url)
-                                time.sleep(1)
+                                      novel_title.name, '  ', section_title, '  ', section_url)
                             except Exception as e:
                                 print(e)
                                 break
+                        finally:
+                            content_lock.release()
+
             except Exception as e:
                 print(e, '  ', novel_title.url)
         db.session.remove()

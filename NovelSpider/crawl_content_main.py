@@ -11,4 +11,8 @@ if __name__ == '__main__':
     for novel_type in novel_type_list:
         novel_type_obj = db.session.query(NovelType).filter(NovelType.name == novel_type).one()
         novel_title_list = db.session.query(NovelTitle).filter(NovelTitle.novel_type == novel_type_obj).all()
-        CrawlNovelSectionThread(novel_title_list, lock=True).start()
+        CrawlNovelSectionThread(
+            novel_title_list,
+            lock=True,
+            ignore_list=[35, 77, 93, 181, 270, 261]
+        ).start()
