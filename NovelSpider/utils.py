@@ -241,6 +241,7 @@ class CrawlNovelSectionThread(threading.Thread):
                                       novel_title.name, '  ', section_title, '  ', section_url)
                             except Exception as e:
                                 print(e)
+                                db.session.remove()
                                 break
                         finally:
                             content_lock.release()
