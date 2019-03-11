@@ -8,6 +8,50 @@
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script type="text/javascript" src="/static/js/base.js"></script>
+  <script type="text/javascript">
+      function login() {
+
+      }
+      function register() {
+          var user_name = $("#index-modal-regist-username");
+          var password = $("#index-modal-regist-password");
+          var repassword = $("#index-modal-regist-repassword");
+          var email = $("#index-modal-regist-emal");
+
+          var password_info = $("#index-modal-regist-password-info");
+          var repassword_info = $("#index-modal-regist-repassword-info")
+          var email_info = $("#index-modal-regist-email-info")
+          if(user_name.val() == '' || password.val() == '' || repassword.val() == '' || email.val() == '') {
+              email_info.text('不能有空信息！');
+              email_info.css({'color': 'red'});
+              return false;
+          }
+          if (password.val() != repassword.val()) {
+              password.val('');
+              repassword.val('');
+              password.parent().addClass('has-error');
+              repassword.parent().addClass('has-error');
+              password_info.text('密码不一致');
+              return false;
+          }
+          var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+          if (!reg.test(email.val())) {
+              email.val('');
+              email.parent().addClass('has-error');
+              email_info.text('邮箱格式不正确!');
+              flag = false;
+          }
+          $.post('/user/register', {user_name: user_name.val(), password: password.val(), email: email.val()}, function (data, status) {
+              if (data == 'success') {
+                  alert('注册成功！');
+                  $("#index-modal-regist").modal("hide");
+              } else {
+                  alert('注册失败！');
+              }
+          });
+          return true;
+      }
+  </script>
 {% endblock %}
 {% block navbar %}
     <div class="container">
@@ -69,8 +113,8 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <ul class="nav nav-tabs">
-		  <li role="presentation" class="active" id="index-modal-login-login"><a href="#"><strong>登录</strong></a></li>
-		  <li role="presentation" id="index-modal-login-regist"><a href="#"><strong>注册</strong></a></li>
+		  <li role="presentation" class="active" id="index-modal-login-login"><a href="javascript: void(0);"><strong>登录</strong></a></li>
+		  <li role="presentation" id="index-modal-login-regist"><a href="javascript:void(0);"><strong>注册</strong></a></li>
 		</ul>
       </div>
       <div class="modal-body">
@@ -84,7 +128,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success">登录</button>
+        <button type="submit" class="btn btn-success" onclick="login();">登录</button>
         <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
       </div>
     </div><!-- /.modal-content -->
@@ -98,8 +142,8 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <ul class="nav nav-tabs">
-		  <li role="presentation" class="active" id="index-modal-regist-login"><a href="#"><strong>登录</strong></a></li>
-		  <li role="presentation" id="index-modal-regist-regist"><a href="#"><strong>注册</strong></a></li>
+		  <li role="presentation" class="active" id="index-modal-regist-login"><a href="javascript:void(0);"><strong>登录</strong></a></li>
+		  <li role="presentation" id="index-modal-regist-regist"><a href="javascript:void(0);"><strong>注册</strong></a></li>
 		</ul>
       </div>
       <div class="modal-body">
@@ -109,17 +153,20 @@
 			  </div>
 			  <div class="form-group index-modal">
 			    <input type="password" class="form-control" id="index-modal-regist-password" placeholder="密码">
-			  </div>
+			    <span id="index-modal-regist-password-info" class="help-block"></span>
+              </div>
 			  <div class="form-group index-modal">
 			    <input type="password" class="form-control" id="index-modal-regist-repassword" placeholder="确认密码">
-			  </div>
+			    <span id="index-modal-regist-repassword-info" class="help-block"></span>
+              </div>
 			  <div class="form-group index-modal">
 			    <input type="email" class="form-control" id="index-modal-regist-emal" placeholder="邮箱">
-			  </div>
+			    <span id="index-modal-regist-email-info" class="help-block"></span>
+              </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success">注册</button>
+        <button type="submit" class="btn btn-success" onclick="register();">注册</button>
         <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
       </div>
     </div><!-- /.modal-content -->
