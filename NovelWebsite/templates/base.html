@@ -10,7 +10,28 @@
   <script type="text/javascript" src="/static/js/base.js"></script>
   <script type="text/javascript">
       function login() {
-
+          var username = $("#index-modal-login-username");
+          var password = $("#index-modal-login-password");
+          var info = $("#index-modal-login-info");
+          if(username.val() == '') {
+              username.parent().addClass('has-error');
+              return false;
+          }
+          if(password.val() == '') {
+              password.parent().addClass('has-error');
+              return false;
+          }
+          $.post('/user/login', {username: username.val(), password: password.val()}, function(data) {
+              if (data == 'success') {
+                  alert('登录成功！');
+                  window.location.reload();
+              } else {
+                  info.text('用户名或密码错误，登录失败！');
+                  info.css({color: 'red'});
+                  return false;
+              }
+          });
+          return true;
       }
       function register() {
           var user_name = $("#index-modal-regist-username");
@@ -120,10 +141,11 @@
       <div class="modal-body">
         <form>
         	  <div class="form-group index-modal">
-			    <input type="text" class="form-control" id="index-modal-login-username" placeholder="用户名">
+			     <input type="text" class="form-control" id="index-modal-login-username" placeholder="用户名">
 			  </div>
 			  <div class="form-group index-modal">
-			    <input type="password" class="form-control" id="index-modal-login-password" placeholder="密码">
+			     <input type="password" class="form-control" id="index-modal-login-password" placeholder="密码">
+                 <span id="index-modal-login-info" class="help-block"></span>
 			  </div>
         </form>
       </div>

@@ -35,25 +35,19 @@
                   <button type="submit" class="btn btn-info" style="width: 100px">搜索</button>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                <li>
-                  <a href="javascript:void(0);" id="index-modal-user-login-button">
-                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                    <strong>登录|注册</strong>
-                  </a>
-                </li>
-              </ul>
-                <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="bugtgton" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="true">
-                        {{ data['user'].name }}
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="#">个人信息</a></li>
-                        <li><a href="#">个人书架</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">退出登录</a></li>
-                    </ul>
-                </div>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false" href="javascript: void(0);">
+                            {{ data['user'].name }}<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="#">个人信息</a></li>
+                            <li><a href="#">个人书架</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/user/logout">退出登录</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div><!-- /.navbar-collapse -->
           </div><!-- /.container-fluid -->
         </nav>
