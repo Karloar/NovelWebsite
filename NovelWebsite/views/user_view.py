@@ -2,10 +2,15 @@ from flask import Blueprint
 from flask import request
 from flask import redirect
 from flask import session
+from flask import render_template
 from . import md5
+from . import error_processing
+from . import get_base_url_for_pagination
 from ..models import db
 from ..models import User
 from ..models import UserCollection
+from ..models import NovelType
+from ..models import NovelTitle
 
 
 user_view = Blueprint(__name__, 'user_view')
@@ -77,3 +82,65 @@ def add_collection():
     finally:
         db.session.remove()
     return 'error'
+
+
+@user_view.route("/user/collections/category/<int:category>/<int:page>", methods=['GET'])
+@user_view.route("/user/collections/category/<int:category>", methods=['GET'])
+@user_view.route("/user/collections/<int:page>", methods=['GET'])
+@user_view.route("/user/collections", methods=['GET'])
+@error_processing
+def show_collections(page=1, category=None):
+    if 'user' not in session:
+        return redirect("/")
+    data = dict()
+    data['user'] = session['user']
+    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    per_page = 20
+    data['base_url'] = get_base_url_for_pagination(request.base_url, page)
+    data['current_page'] = page
+    if category:
+        data['collections'] = db.session.query(UserCollection).join(NovelTitle).filter(
+            UserCollection.user_id == session['user']['id'],
+            NovelTitle.type_id == category
+        ).order_by(
+            UserCollection.id.desc(),
+            NovelTitle.read_num.desc(),
+            NovelTitle.id.asc()
+        ).offset((page - 1) * per_page).limit(per_page)
+        collection_num = db.session.query(UserCollection).join(NovelTitle).filter(
+            UserCollection.user_id == session['user']['id'],
+            NovelTitle.type_id == category
+        ).count()
+    else:
+        data['collections'] = db.session.query(UserCollection).join(NovelTitle).filter(
+            UserCollection.user_id == session['user']['id'],
+        ).order_by(
+            UserCollection.id.desc(),
+            NovelTitle.read_num.desc(),
+            NovelTitle.id.asc()
+        ).offset((page - 1) * per_page).limit(per_page)
+        collection_num = db.session.query(UserCollection).join(NovelTitle).filter(
+            UserCollection.user_id == session['user']['id'],
+        ).count()
+    data['total_page'] = collection_num // per_page if collection_num % per_page == 0 else collection_num // per_page + 1
+    db.session.remove()
+    return render_template("collection.html", data=data)
+
+
+@user_view.route("/user/removeCollection", methods=['POST'])
+def remove_collection():
+    collection_id = request.form.get('collection_id', None)
+    if not collection_id:
+        return 'error'
+    try:
+        collection = db.session.query(UserCollection).filter(UserCollection.id == int(collection_id)).one()
+        db.session.delete(collection)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return 'error'
+    finally:
+        db.session.remove()
+    return 'success'
+
+

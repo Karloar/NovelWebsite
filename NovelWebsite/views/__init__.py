@@ -27,6 +27,12 @@ def md5(message):
     return m2.hexdigest()
 
 
+def get_base_url_for_pagination(base_url, page):
+    if not base_url.endswith(str(page)):
+        if not base_url.endswith("/"):
+            return base_url
+    return base_url.rsplit("/", maxsplit=1)[0]
+
 # def get_page_label_range(current_page, total_page, page_r=3):
 #     page_label_num = 2 * page_r + 1
 #     if total_page <= page_label_num:

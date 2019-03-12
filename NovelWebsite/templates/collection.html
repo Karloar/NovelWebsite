@@ -1,0 +1,93 @@
+{% extends "login_base.html" %}
+{% block title %}个人小说网--个人书架{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    function removeCollection(collection_id) {
+        $.post("/user/removeCollection", {collection_id: collection_id}, function(data) {
+            if (data == 'success') {
+                alert('移除成功！');
+                window.location.reload();
+            } else if (data == 'error') {
+                alert('移除失败！');
+            }
+        });
+    }
+</script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            &nbsp;&nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">个人书架</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="/user/collections">全部类型</a>&nbsp;&nbsp;
+                            {% for novel_type in data['type_list'] %}
+                                <a href="/user/collections/category/{{ novel_type.id }}">{{ novel_type.name }}</a>&nbsp;
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            &nbsp;&nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-success">
+                                <table class="table">
+                                    <tbody>
+                                        {% for collection in data['collections'] %}
+                                        <tr>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-md-2" style="text-align: center;">
+                                                        <a href="/novel/{{ collection.novel_title.id }}">
+                                                            <img src="{{ collection.novel_title.cover }}" alt="{{ collection.novel_title.name }}" class="img-rounded" style="width:100px; height:120px;">
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <dl>
+                                                            <dt style="font-size: 20px;"><a href="/novel/{{ collection.novel_title.id }}">{{ collection.novel_title.name }}</a></dt>
+                                                            <dd style="font-size: 15px;">作者：{{ collection.novel_title.author }}</dd>
+                                                            <dd style="font-size: 15px;">分类：{{ collection.novel_title.novel_type.name }}</dd>
+                                                            <dd style="font-size: 15px;">简介：{{ collection.novel_title.introduction | safe if collection.novel_title.introduction }}</dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="row">
+                                                            <div class="col-md-12" style="height: 45px;">
+                                                                &nbsp;
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <button type="button" class="btn btn-danger" onclick="removeCollection({{ collection.id }});">移出书架</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td>{{ pagination(data['current_page'], data['total_page'], data['base_url'], 4) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ super() }}
+{% endblock %}
