@@ -8,6 +8,17 @@
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script type="text/javascript" src="/static/js/base.js"></script>
+  <script type="text/javascript">
+      function logout() {
+          $.post("/user/logout", function(data) {
+              if (data == 'error') {
+                  alert('出现错误，退出失败！');
+              } else if (data == 'success') {
+                  window.location.reload();
+              }
+          });
+      }
+  </script>
 {% endblock %}
 {% block navbar %}
     <div class="container">
@@ -44,7 +55,7 @@
                             <li><a href="#">个人信息</a></li>
                             <li><a href="#">个人书架</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="/user/logout">退出登录</a></li>
+                            <li><a href="javascript: void(0);" onclick="logout();">退出登录</a></li>
                         </ul>
                     </li>
                 </ul>

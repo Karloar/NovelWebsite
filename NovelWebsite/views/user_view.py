@@ -48,11 +48,12 @@ def login():
     return 'success'
 
 
-@user_view.route("/user/logout", methods=['GET'])
+@user_view.route("/user/logout", methods=['POST'])
 def logout():
     if 'user' in session:
         del session['user']
-    return redirect("/")
+        return "success"
+    return "error"
 
 
 @user_view.route("/user/addCollection", methods=['POST'])
