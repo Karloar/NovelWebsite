@@ -44,7 +44,7 @@ def login():
         return 'fail'
     try:
         user = db.session.query(User).filter(User.name == username, User.password == md5(password)).one()
-        session['user'] = {"id": user.id, "name": user.name}
+        session['user'] = {"id": user.id, "name": user.name, "email": user.email}
     except Exception as e:
         print(e)
         return 'fail'
@@ -144,3 +144,21 @@ def remove_collection():
     return 'success'
 
 
+@user_view.route('/user/update_info', methods=['POST'])
+def update_info():
+    if 'user' not in session:
+        return "error"
+    user_name = request.form.get("name", None)
+    email = request.form.get("email", None)
+    if not user_name or not email:
+        return "error"
+    try:
+        db.session.query(User).filter(
+            User.id == session['user']['id']
+        ).update({User.name: user_name, User.email: email})
+        db.session.commit()
+        session['user'] = {"id": session['user']['id'], "name": user_name, "email": email}
+    except Exception as e:
+        print(e)
+        return "error"
+    return "success"
