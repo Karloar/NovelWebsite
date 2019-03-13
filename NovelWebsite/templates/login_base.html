@@ -22,15 +22,18 @@
           let user_info_modal = $("#user_info");
           user_info_modal.modal("show");
       }
+      function show_password_modal() {
+          $("#password_modal").modal("show");
+      }
       function update_info(x) {
           let user_name = $("#user_name");
           let user_email = $("#user_email");
           let user_email_info = $("#user_email_info");
           let button = $(x);
-          if (button.hasClass("btn-primary")) {
-              button.removeClass("btn-primary");
+          if (button.hasClass("btn-info")) {
+              button.removeClass("btn-info");
               button.addClass("btn-success");
-              button.text("确定修改")
+              button.text("确定修改");
               user_name.removeAttr("readonly");
               user_email.removeAttr("readonly");
           } else {
@@ -54,6 +57,48 @@
               });
           }
           return true;
+      }
+      function update_password() {
+          let old_password = $("#old_password");
+          let new_password = $("#new_password");
+          let new_repassword = $("#new_repassword");
+          let password_modal_hr = $("#password_modal_hr");
+          let old_password_info = $("#old_password_info");
+          let new_password_info = $("#new_password_info");
+          let new_repassword_info = $("#new_repassword_info");
+          if (old_password.parent().css("display") == 'block'
+          && new_password.parent().css("display") == 'none' && new_repassword.parent().css("display") == "none") {
+              $.post("/user/password_validation", {password: old_password.val()}, function(data) {
+                  if (data == "error") {
+                      old_password.parent().addClass("has-error");
+                      old_password_info.text("密码错误！");
+                  } else if (data == 'success') {
+                      old_password.parent().hide();
+                      new_password.parent().show();
+                      new_repassword.parent().show();
+                  }
+              });
+              return true;
+          } else {
+              if (new_password.val() == '') {
+                  new_password.parent().addClass("has-error");
+                  new_password_info.text("密码不能为空！");
+                  return false;
+              }
+              if (new_password.val() != new_repassword.val()) {
+                  new_repassword.parent().addClass("has-error");
+                  new_repassword_info.text("密码不一致！");
+                  return false;
+              }
+              $.post("/user/update_password", {password: new_password.val()}, function(data) {
+                  if (data == 'error') {
+                      alert('密码修改失败！');
+                  } else if (data == 'success') {
+                      alert('密码修改成功！');
+                  }
+                  window.location.reload();
+              });
+          }
       }
   </script>
 {% endblock %}
@@ -90,7 +135,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                             <li><a href="javascript: void(0);" onclick="show_user_info();">个人信息</a></li>
-                            <li><a href="javascript: void(0);">修改密码</a></li>
+                            <li><a href="javascript: void(0);" onclick="show_password_modal();">修改密码</a></li>
                             <li><a href="/user/collections">个人书架</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="javascript: void(0);" onclick="logout();">退出登录</a></li>
@@ -140,8 +185,44 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="update_info(this);">开始修改</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-info" onclick="update_info(this);">开始修改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="password_modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">修改密码</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group" style="display: block;">
+                        <label for="user_name">初始密码</label>
+                        <input type="password" id="old_password" class="form-control"/>
+                        <span class="help-block" id="old_password_info"></span>
+                    </div>
+                    <div class="form-group" style="display: none;">
+                        <label for="user_name">新密码</label>
+                        <input type="password" id="new_password" class="form-control"/>
+                        <span class="help-block" id="new_password_info"></span>
+                    </div>
+                    <div class="form-group" style="display: none;">
+                        <label for="user_name">确认新密码</label>
+                        <input type="password" id="new_repassword" class="form-control"/>
+                        <span class="help-block" id="new_repassword_info"></span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-info" onclick="update_password();">确定</button>
             </div>
         </div>
     </div>

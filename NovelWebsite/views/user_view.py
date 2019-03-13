@@ -161,4 +161,44 @@ def update_info():
     except Exception as e:
         print(e)
         return "error"
+    finally:
+        db.session.remove()
+    return "success"
+
+
+@user_view.route("/user/password_validation", methods=['POST'])
+def password_validation():
+    if 'user' not in session:
+        return "error"
+    password = request.form.get("password", None)
+    if not password:
+        return "error"
+    try:
+        user = db.session.query(User).filter(User.id == session['user']['id']).one()
+        if user.password == md5(password):
+            return "success"
+    except Exception as e:
+        print(e)
+    finally:
+        db.session.remove()
+    return "error"
+
+
+@user_view.route("/user/update_password", methods=['POST'])
+def update_password():
+    if 'user' not in session:
+        return "error"
+    password = request.form.get("password", None)
+    if not password:
+        return "error"
+    try:
+        db.session.query(User).filter(User.id == session['user']['id']).update(
+            {User.password: md5(password)}
+        )
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return "error"
+    finally:
+        db.session.remove()
     return "success"
