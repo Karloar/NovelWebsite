@@ -36,6 +36,7 @@
               button.text("确定修改");
               user_name.removeAttr("readonly");
               user_email.removeAttr("readonly");
+              user_name.focus();
           } else {
               let reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
               if (user_name.val() == '') {
@@ -134,9 +135,14 @@
                             {{ data['user'].name }}<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            {% if data['user'].name | lower != 'admin' %}
                             <li><a href="javascript: void(0);" onclick="show_user_info();">个人信息</a></li>
                             <li><a href="javascript: void(0);" onclick="show_password_modal();">修改密码</a></li>
                             <li><a href="/user/collections">个人书架</a></li>
+                            {% else %}
+                            <li><a href="/admin/users">用户管理</a></li>
+                            <li><a href="/admin/novels/1">小说管理</a></li>
+                            {% endif %}
                             <li role="separator" class="divider"></li>
                             <li><a href="javascript: void(0);" onclick="logout();">退出登录</a></li>
                         </ul>
@@ -175,11 +181,13 @@
                 <form>
                     <div class="form-group">
                         <label for="user_name">用户名</label>
-                        <input type="text" id="user_name" class="form-control" readonly="readonly" value="{{ data['user'].name }}"/>
+                        <input type="text" id="user_name" class="form-control" readonly="readonly" value="{{ data['user'].name }}"
+                               style="background-color: white;"/>
                     </div>
                     <div class="form-group">
                         <label for="user_name">邮箱</label>
-                        <input type="text" id="user_email" class="form-control" readonly="readonly" value="{{ data['user'].email }}"/>
+                        <input type="text" id="user_email" class="form-control" readonly="readonly" value="{{ data['user'].email }}"
+                               style="background-color: white;"/>
                         <span class="help-block" id="user_email_info"></span>
                     </div>
                 </form>

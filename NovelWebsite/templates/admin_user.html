@@ -1,0 +1,115 @@
+{% extends "login_base.html" %}
+{% block title %}个人小说网--用户管理{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    function update_userinfo(x) {
+        let button = $(x);
+        let tr = button.parent().parent();
+        let id = tr.children("th").text();
+        let username = tr.children("td").children("input").first();
+        let email = tr.children("td").next().children("input").first();
+        if (button.hasClass("btn-info")) {
+            username.removeAttr("readonly");
+            email.removeAttr("readonly");
+            button.removeClass("btn-info");
+            button.addClass("btn-success");
+            button.text("确定修改");
+            username.focus();
+            return true;
+        } else {
+            let reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+              if (username.val() == '') {
+                  username.parent().addClass("has-error");
+                  return false;
+              }
+              if (!reg.test(email.val())) {
+                  email.parent().addClass("has-error");
+                  return false;
+              }
+              $.post("/user/update_info", {name: username.val(), email: email.val(), id:Number(id)}, function(data) {
+                  if(data == 'error') {
+                      alert('修改失败！');
+                  } else if (data == 'success') {
+                      alert('修改成功！');
+                      window.location.reload();
+                  }
+              });
+
+        }
+    }
+    function delete_user(x) {
+        let button = $(x);
+        let tr = button.parent().parent();
+        let id = tr.children("th").text();
+        if (button.hasClass("btn-warning")) {
+            button.removeClass("btn-warning");
+            button.addClass("btn-danger");
+            button.text("确定删除");
+            return true;
+        } else {
+            $.post("/user/delete_user", {id: id}, function(data) {
+                if (data == 'error') {
+                    alert('删除失败!');
+                } else if (data == 'success') {
+                    alert('删除成功！');
+                }
+            });
+            window.location.reload();
+        }
+
+    }
+</script>
+{% endblock %}
+{% block content %}
+ <div class="container">
+     <div class="row">
+         <div class="col-md-12">
+             &nbsp;&nbsp;
+         </div>
+     </div>
+     <div class="row">
+         <div class="col-md-12">
+             <div class="panel panel-info">
+                 <div class="panel-heading">用户列表</div>
+                 <div class="panel-body">
+                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-success">
+                                <table class="table table-condensed">
+                                    <tbody>
+                                    <tr>
+                                        <th>编号</th>
+                                        <th>用户名</th>
+                                        <th>邮箱</th>
+                                        <th>收藏数</th>
+                                        <th>操作</th>
+                                    </tr>
+                                        {% for user in data['users'] %}
+                                    <tr>
+                                        <th>{{ user.id }}</th>
+                                        <td><input type="text" value="{{ user.name }}" class="form-control" readonly="readonly" style="background-color: white;" /></td>
+                                        <td><input type="text" value="{{ user.email }}" class="form-control" readonly="readonly" style="background-color: white;" /></td>
+                                        <td>{{ user.user_collections.count() }}</td>
+                                        <td><a href="javascript: void(0);" type="button" class="btn btn-info" onclick="update_userinfo(this);">开始修改</a>&nbsp;&nbsp;
+                                            <a href="javascript:void(0);" type="button" class="btn btn-warning" onclick="delete_user(this);">开始删除</a>
+                                        </td>
+                                    </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td colspan="4">{{ pagination(data['current_page'], data['total_page'], data['base_url'], 4) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+
+ </div>
+{{ super() }}
+{% endblock %}

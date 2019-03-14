@@ -148,16 +148,18 @@ def remove_collection():
 def update_info():
     if 'user' not in session:
         return "error"
+    user_id = request.form.get("id", session['user']['id'])
     user_name = request.form.get("name", None)
     email = request.form.get("email", None)
     if not user_name or not email:
         return "error"
     try:
         db.session.query(User).filter(
-            User.id == session['user']['id']
+            User.id == user_id
         ).update({User.name: user_name, User.email: email})
         db.session.commit()
-        session['user'] = {"id": session['user']['id'], "name": user_name, "email": email}
+        if "id" not in request.form:
+            session['user'] = {"id": user_id, "name": user_name, "email": email}
     except Exception as e:
         print(e)
         return "error"
@@ -195,6 +197,49 @@ def update_password():
         db.session.query(User).filter(User.id == session['user']['id']).update(
             {User.password: md5(password)}
         )
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return "error"
+    finally:
+        db.session.remove()
+    return "success"
+
+
+@user_view.route("/admin/users/<int:page>", methods=["GET"])
+@user_view.route("/admin/users", methods=['GET'])
+@error_processing
+def admin_users(page=1):
+    if 'user' not in session or session['user']['name'].lower() != 'admin':
+        return redirect("/")
+    data = dict()
+    data['user'] = session['user']
+    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    per_page = 20
+    data['current_page'] = page
+    data['base_url'] = get_base_url_for_pagination(request.base_url, page)
+    data['users'] = db.session.query(User).filter(
+        db.func.lower(User.name) != 'admin'
+    ).order_by(User.id.asc()).offset((page - 1) * per_page).limit(per_page)
+    user_num = db.session.query(User).filter(
+        db.func.lower(User.name) != 'admin'
+    ).count()
+    data['total_page'] = user_num // per_page if user_num % per_page == 0 else user_num // per_page + 1
+    db.session.remove()
+    return render_template("admin_user.html", data=data)
+
+
+@user_view.route("/user/delete_user", methods=['POST'])
+def delete_user():
+    if 'user' not in session:
+        return "error"
+    user_id = request.form.get("id", None)
+    if not user_id:
+        return "error"
+    try:
+        user = db.session.query(User).filter(User.id == int(user_id)).one()
+        db.session.query(UserCollection).filter(UserCollection.user_id == user.id).delete()
+        db.session.delete(user)
         db.session.commit()
     except Exception as e:
         print(e)
