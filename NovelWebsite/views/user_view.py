@@ -66,7 +66,7 @@ def add_collection():
     if 'user' not in session:
         return 'not_login'
     novel_id = request.form.get('novel_id', None)
-    if not novel_id:
+    if not novel_id or session['user']['name'].lower() == 'admin':
         return 'error'
     try:
         db.session.query(UserCollection).filter(
