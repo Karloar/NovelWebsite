@@ -221,7 +221,7 @@ def error_404(error):
 @index_view.route("/search", methods=['POST'])
 @error_processing
 def first_search():
-    session['search_word'] = request.form['search_word']
+    session['search_word'] = request.form['search_word'].strip()
     return redirect("/search/1")
 
 
