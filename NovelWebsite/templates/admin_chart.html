@@ -23,7 +23,7 @@
                   },
                   xAxis: {
                       type: 'category',
-                      boundaryGap: false,
+                      boundaryGap: true,
                       data: novel_names,
                       axisLabel: {
                           interval: 0
@@ -34,7 +34,7 @@
                   },
                   series: [{
                       data: novel_read_nums,
-                      type: 'line'
+                      type: 'bar'
                   }]
               };
               mychart.setOption(option);
