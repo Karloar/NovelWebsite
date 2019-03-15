@@ -1,0 +1,66 @@
+{% if data['user'] %}
+    {% extends "login_base.html" %}
+{% else %}
+    {% extends "base.html" %}
+{% endif %}
+{% block title %}个人小说网--热度统计{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
+<script type="text/javascript">
+      function show_statistic() {
+          let mychart = echarts.init(document.getElementById("novel_statistic_chart"));
+          $.post("/admin/statistic/data", function(data) {
+              let novel_names = new Array();
+              let novel_read_nums = new Array();
+              for(let i in data) {
+                  novel_names.push(data[i].name);
+                  novel_read_nums.push(data[i].read_num);
+              }
+              let option = {
+                  tooltip: {
+                      trigger: 'axis'
+                  },
+                  xAxis: {
+                      type: 'category',
+                      boundaryGap: false,
+                      data: novel_names,
+                      axisLabel: {
+                          interval: 0
+                      }
+                  },
+                  yAxis: {
+                      type: 'value'
+                  },
+                  series: [{
+                      data: novel_read_nums,
+                      type: 'line'
+                  }]
+              };
+              mychart.setOption(option);
+              $("#statistic_modal").modal("show");
+          });
+      }
+      $(show_statistic);
+
+</script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            &nbsp;&nbsp;
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info" style="height: 400px;">
+                <div class="panel-body" style="width: 100%; height: 400px;" id="novel_statistic_chart">
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{{ super() }}
+{% endblock %}

@@ -10,7 +10,7 @@ from ..models import NovelSection
 from . import error_processing
 
 
-index_view = Blueprint(__name__, 'index_view')
+index_view = Blueprint('index_view', __name__)
 
 
 @index_view.route("/", methods=["GET"])

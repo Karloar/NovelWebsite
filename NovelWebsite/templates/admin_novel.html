@@ -1,0 +1,67 @@
+{% extends "login_base.html" %}
+{% block title %}个人小说网--小说管理{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+
+</script>
+{% endblock %}
+{% block content %}
+ <div class="container">
+     <div class="row">
+         <div class="col-md-12">
+             &nbsp;&nbsp;
+         </div>
+     </div>
+     <div class="row">
+         <div class="col-md-12">
+             <div class="panel panel-info">
+                 <div class="panel-heading">小说列表</div>
+                 <div class="panel-body">
+                     <div class="row">
+                         <div class="col-md-12">
+                             <a href="/admin/novels">默认</a>&nbsp;&nbsp;
+                             <a href="/admin/novels/sections">按章节数排序</a>&nbsp;&nbsp;
+                             <a href="/admin/novels/heat">按热度排序</a>
+                         </div>
+                     </div>
+                     <div class="row">
+                         <div class="col-md-12">&nbsp;&nbsp;</div>
+                     </div>
+                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-success">
+                                <table class="table table-condensed table-hover">
+                                    <tbody>
+                                    <tr>
+                                        <th>编号</th>
+                                        <th>小说名称</th>
+                                        <th>作者</th>
+                                        <th>章节数</th>
+                                        <th>热度</th>
+                                    </tr>
+                                        {% for novel in data['novels'] %}
+                                    <tr>
+                                        <td><label>{{ novel.id }}</label></td>
+                                        <td><a href="/admin/novel/{{ novel.id }}/sections">{{ novel.name }}</a></td>
+                                        <td>{{ novel.author }}</td>
+                                        <td>{{ novel.novel_sections.count() }}</td>
+                                        <td><label class="label label-primary">{{ novel.read_num }}</label></td>
+                                    </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td colspan="5">{{ pagination(data['current_page'], data['total_page'], data['base_url'], 4) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+ </div>
+{{ super() }}
+{% endblock %}

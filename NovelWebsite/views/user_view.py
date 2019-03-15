@@ -13,7 +13,7 @@ from ..models import NovelType
 from ..models import NovelTitle
 
 
-user_view = Blueprint(__name__, 'user_view')
+user_view = Blueprint('user_view', __name__)
 
 
 @user_view.route("/user/register", methods=['POST'])
@@ -67,6 +67,8 @@ def add_collection():
         return 'not_login'
     novel_id = request.form.get('novel_id', None)
     if not novel_id:
+        return 'error'
+    if session['user']['name'].lower() == 'admin':
         return 'error'
     try:
         db.session.query(UserCollection).filter(
@@ -205,45 +207,3 @@ def update_password():
         db.session.remove()
     return "success"
 
-
-@user_view.route("/admin/users/<int:page>", methods=["GET"])
-@user_view.route("/admin/users", methods=['GET'])
-@error_processing
-def admin_users(page=1):
-    if 'user' not in session or session['user']['name'].lower() != 'admin':
-        return redirect("/")
-    data = dict()
-    data['user'] = session['user']
-    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
-    per_page = 20
-    data['current_page'] = page
-    data['base_url'] = get_base_url_for_pagination(request.base_url, page)
-    data['users'] = db.session.query(User).filter(
-        db.func.lower(User.name) != 'admin'
-    ).order_by(User.id.asc()).offset((page - 1) * per_page).limit(per_page)
-    user_num = db.session.query(User).filter(
-        db.func.lower(User.name) != 'admin'
-    ).count()
-    data['total_page'] = user_num // per_page if user_num % per_page == 0 else user_num // per_page + 1
-    db.session.remove()
-    return render_template("admin_user.html", data=data)
-
-
-@user_view.route("/user/delete_user", methods=['POST'])
-def delete_user():
-    if 'user' not in session:
-        return "error"
-    user_id = request.form.get("id", None)
-    if not user_id:
-        return "error"
-    try:
-        user = db.session.query(User).filter(User.id == int(user_id)).one()
-        db.session.query(UserCollection).filter(UserCollection.user_id == user.id).delete()
-        db.session.delete(user)
-        db.session.commit()
-    except Exception as e:
-        print(e)
-        return "error"
-    finally:
-        db.session.remove()
-    return "success"

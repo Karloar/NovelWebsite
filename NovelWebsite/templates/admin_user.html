@@ -48,7 +48,7 @@
             button.text("确定删除");
             return true;
         } else {
-            $.post("/user/delete_user", {id: id}, function(data) {
+            $.post("/admin/delete_user", {id: id}, function(data) {
                 if (data == 'error') {
                     alert('删除失败!');
                 } else if (data == 'success') {
@@ -97,7 +97,7 @@
                                     </tr>
                                         {% endfor %}
                                         <tr>
-                                            <td colspan="4">{{ pagination(data['current_page'], data['total_page'], data['base_url'], 4) }}</td>
+                                            <td colspan="5">{{ pagination(data['current_page'], data['total_page'], data['base_url'], 4) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
