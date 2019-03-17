@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2892351d-5866-4f6c-895b-a6876e5de2b5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/NovelWebsite/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/NovelWebsite/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NovelWebsite/templates/login_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/NovelWebsite/templates/login_base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NovelSpider/crawl_cover_introduction_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/NovelSpider/crawl_cover_introduction_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gunicorn.log" beforeDir="false" afterPath="$PROJECT_DIR$/gunicorn.log" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -13,15 +13,28 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/NovelWebsite$crawl_cover_introduction_main.coverage" NAME="crawl_cover_introduction_main Coverage Results" MODIFIED="1552826671703" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NovelSpider" />
     <SUITE FILE_PATH="coverage/NovelWebsite$crawl_content_main.coverage" NAME="crawl_content_main Coverage Results" MODIFIED="1552812469208" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NovelSpider" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="login_base.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="login_base.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NovelWebsite/templates/login_base.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="127" column="83" selection-start-line="127" selection-start-column="83" selection-end-line="127" selection-end-column="83" />
+            <state relative-caret-position="59">
+              <caret line="115" column="38" selection-start-line="115" selection-start-column="38" selection-end-line="115" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="crawl_cover_introduction_main.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/NovelSpider/crawl_cover_introduction_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="163">
+              <caret line="19" column="74" selection-start-line="19" selection-start-column="74" selection-end-line="19" selection-end-column="74" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -122,6 +135,7 @@
         <option value="$PROJECT_DIR$/NovelWebsite/templates/admin_update_novel_section.html" />
         <option value="$PROJECT_DIR$/NovelWebsite/templates/base.html" />
         <option value="$PROJECT_DIR$/NovelWebsite/templates/login_base.html" />
+        <option value="$PROJECT_DIR$/NovelSpider/crawl_cover_introduction_main.py" />
       </list>
     </option>
   </component>
@@ -152,19 +166,12 @@
             <path>
               <item name="NovelWebsite" type="b2602c69:ProjectViewProjectNode" />
               <item name="NovelWebsite" type="462c0819:PsiDirectoryNode" />
-              <item name="NovelWebsite" type="462c0819:PsiDirectoryNode" />
+              <item name="NovelSpider" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="NovelWebsite" type="b2602c69:ProjectViewProjectNode" />
               <item name="NovelWebsite" type="462c0819:PsiDirectoryNode" />
               <item name="NovelWebsite" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="NovelWebsite" type="b2602c69:ProjectViewProjectNode" />
-              <item name="NovelWebsite" type="462c0819:PsiDirectoryNode" />
-              <item name="NovelWebsite" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -192,7 +199,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.crawl_cover_introduction_main">
     <configuration name="crawl_content_main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="NovelWebsite" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -212,8 +219,32 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
+    <configuration name="crawl_cover_introduction_main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="NovelWebsite" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/NovelSpider" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/NovelSpider/crawl_cover_introduction_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.crawl_content_main" />
+      <item itemvalue="Python.crawl_cover_introduction_main" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.crawl_cover_introduction_main" />
         <item itemvalue="Python.crawl_content_main" />
       </list>
     </recent_temporary>
@@ -244,8 +275,8 @@
       <window_info anchor="bottom" id="Database Changes" order="7" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.3292011" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3292011" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.3292011" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3292011" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3292011" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2532189" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
@@ -419,8 +450,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/NovelWebsite/templates/login_base.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="127" column="83" selection-start-line="127" selection-start-column="83" selection-end-line="127" selection-end-column="83" />
+        <state relative-caret-position="59">
+          <caret line="115" column="38" selection-start-line="115" selection-start-column="38" selection-end-line="115" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/NovelSpider/crawl_cover_introduction_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="19" column="74" selection-start-line="19" selection-start-column="74" selection-end-line="19" selection-end-column="74" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

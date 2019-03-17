@@ -16,9 +16,9 @@ cover_path = os.path.join(
 
 if __name__ == '__main__':
     for novel_title in db.session.query(NovelTitle).all():
-        if novel_title.cover is None:
+        cover_file_name = os.path.join(cover_path, str(novel_title.id) + '.jpg')
+        if novel_title.cover is None or not os.path.exists(cover_file_name):
             cover_src = get_cover_href_from_url(novel_title.url)
-            cover_file_name = os.path.join(cover_path, str(novel_title.id) + '.jpg')
             download_cover(cover_src, cover_file_name)
             novel_title.cover = '/static/img/cover/{0}.jpg'.format(str(novel_title.id))
             db.session.query(NovelTitle).filter(NovelTitle.id == novel_title.id).update(
