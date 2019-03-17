@@ -26,7 +26,8 @@
                       boundaryGap: true,
                       data: novel_names,
                       axisLabel: {
-                          interval: 0
+                          show: true,
+                          rotate: 30
                       }
                   },
                   yAxis: {
@@ -38,10 +39,54 @@
                   }]
               };
               mychart.setOption(option);
-              $("#statistic_modal").modal("show");
           });
       }
-      $(show_statistic);
+
+      function init_chart(div, category_id) {
+          console.log(div);
+          let mychart = echarts.init(div);
+          $.post("/admin/statistic/data/" + category_id, function(data) {
+              let novel_names = new Array();
+              let novel_read_nums = new Array();
+              for(let i in data) {
+                  novel_names.push(data[i].name);
+                  novel_read_nums.push(data[i].read_num);
+              }
+              let option = {
+                  tooltip: {
+                      trigger: 'axis'
+                  },
+                  xAxis: {
+                      type: 'category',
+                      boundaryGap: true,
+                      data: novel_names,
+                      axisLabel: {
+                          show: true,
+                          rotate: 30
+                      }
+                  },
+                  yAxis: {
+                      type: 'value'
+                  },
+                  series: [{
+                      data: novel_read_nums,
+                      type: 'bar'
+                  }]
+              };
+              mychart.setOption(option);
+          });
+      }
+
+
+      $(function() {
+          show_statistic();
+          let div_list = document.getElementsByName("chart_content");
+          for(let i in div_list) {
+              // console.log(div_list[i]);
+              let category_id = $(div_list[i]).parent().attr("name");
+              init_chart(div_list[i], category_id);
+          }
+      });
 
 </script>
 {% endblock %}
@@ -54,13 +99,23 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-info" style="height: 400px;">
+            <div class="panel panel-info" style="height: 480px;">
+                <div class="panel-heading">全部小说</div>
                 <div class="panel-body" style="width: 100%; height: 400px;" id="novel_statistic_chart">
                 </div>
             </div>
         </div>
+    </div>
+    {% for novel_type in data['type_list'] %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info" style="height: 480px;" name="{{ novel_type.id }}">
+                <div class="panel-heading">{{ novel_type.name }}</div>
+                <div class="panel-body" style="width: 100%; height: 400px;" name="chart_content"></div>
+            </div>
         </div>
     </div>
+    {% endfor %}
 </div>
 {{ super() }}
 {% endblock %}

@@ -1,0 +1,61 @@
+{% extends "login_base.html" %}
+{% block title %}个人小说网--小说管理{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+
+</script>
+{% endblock %}
+{% block content %}
+ <div class="container">
+     <div class="row">
+         <div class="col-md-12">
+             &nbsp;&nbsp;
+         </div>
+     </div>
+     <div class="row">
+         <div class="col-md-12">
+             <div class="panel panel-info">
+                 <div class="panel-heading">
+                     <div class="row">
+                         <div class="col-md-11">
+                             {{ data['sections'][0].novel_title.name }}
+                         </div>
+                         <div class="col-md-1">
+                             <a type="button" class="btn btn-success btn-sm" href="/admin/novel/{{ data['sections'][0].novel_title.id }}/addsection">添加章节</a>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="panel-body">
+                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-success">
+                                <table class="table table-condensed table-hover">
+                                    <tbody>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>ID</th>
+                                        <th>标题名称</th>
+                                        <th>来源链接</th>
+                                    </tr>
+                                        {% for section in data['sections'] %}
+                                    <tr>
+                                        <td><label>{{ loop.index }}</label></td>
+                                        <td><label>{{ section.id }}</label></td>
+                                        <td><a href="/detail/{{ section.id }}">{{ section.title }}</a></td>
+                                        <td><a href="{{ section.url }}">{{ section.url }}</a></td>
+                                    </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+ </div>
+{{ super() }}
+{% endblock %}

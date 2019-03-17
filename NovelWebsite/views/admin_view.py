@@ -126,10 +126,17 @@ def admin_novels_order_by_heat(page=1):
 
 
 @admin_view.route("/admin/statistic/data", methods=['POST'])
-def admin_statistic_data():
+@admin_view.route("/admin/statistic/data/<int:category_id>", methods=['POST'])
+def admin_statistic_data(category_id=None):
     data_list = []
-    for novel in db.session.query(NovelTitle).order_by(NovelTitle.read_num.desc(), NovelTitle.id.asc()).limit(10):
-        data_list.append({"read_num": novel.read_num, "id": novel.id, "name": novel.name})
+    if not category_id:
+        for novel in db.session.query(NovelTitle).order_by(NovelTitle.read_num.desc(), NovelTitle.id.asc()).limit(10):
+            data_list.append({"read_num": novel.read_num, "id": novel.id, "name": novel.name})
+    else:
+        for novel in db.session.query(NovelTitle).filter(
+            NovelTitle.type_id == category_id
+        ).order_by(NovelTitle.read_num.desc(), NovelTitle.id.asc()).limit(10):
+            data_list.append({"read_num": novel.read_num, "id": novel.id, "name": novel.name})
     return jsonify(data_list)
 
 
@@ -143,3 +150,50 @@ def admin_statistic():
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
     db.session.remove()
     return render_template("admin_chart.html", data=data)
+
+
+@admin_view.route("/admin/novel/<int:novel_id>/sections", methods=['GET'])
+def admin_novel_sections(novel_id):
+    if 'user' not in session or session['user']['name'].lower() != 'admin':
+        return redirect("/")
+    data = dict()
+    data['user'] = session['user']
+    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    data['sections'] = db.session.query(NovelSection).filter(
+        NovelSection.novel_id == novel_id
+    ).order_by(NovelSection.id.desc())
+    db.session.remove()
+    return render_template("admin_novel_sections.html", data=data)
+
+
+@admin_view.route("/admin/novel/<int:novel_id>/addsection", methods=['GET', 'POST'])
+def admin_add_novel_section(novel_id):
+    if 'user' not in session or session['user']['name'].lower() != 'admin':
+        return redirect("/")
+    data = dict()
+    data['user'] = session['user']
+    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    if request.method == 'GET':
+        data['novel'] = db.session.query(NovelTitle).filter(NovelTitle.id == novel_id).one()
+        db.session.remove()
+        return render_template("admin_add_novel_section.html", data=data)
+    section_title = request.form.get("section_title", None)
+    section_content = request.form.get("section_content", None)
+    section_url = request.form.get("section_url", None)
+    if not section_title or not section_content:
+        return "error"
+    section_content = '<br />'.join([x.strip() for x in section_content.split("\n")])
+    try:
+        db.session.add(NovelSection(
+            novel_id=novel_id,
+            title=section_title,
+            content=section_content,
+            url=section_url
+        ))
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return "error"
+    finally:
+        db.session.remove()
+    return "success"

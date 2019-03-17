@@ -1,11 +1,6 @@
 {% extends "login_base.html" %}
 {% block title %}个人小说网--小说管理{% endblock %}
-{% block scripts %}
-{{ super() }}
-<script type="text/javascript">
 
-</script>
-{% endblock %}
 {% block content %}
  <div class="container">
      <div class="row">
@@ -34,23 +29,27 @@
                                 <table class="table table-condensed table-hover">
                                     <tbody>
                                     <tr>
-                                        <th>编号</th>
+                                        <th>序号</th>
+                                        <th>ID</th>
                                         <th>小说名称</th>
                                         <th>作者</th>
+                                        <th>爬取链接</th>
                                         <th>章节数</th>
                                         <th>热度</th>
                                     </tr>
                                         {% for novel in data['novels'] %}
                                     <tr>
+                                        <td><label>{{ loop.index }}</label></td>
                                         <td><label>{{ novel.id }}</label></td>
                                         <td><a href="/admin/novel/{{ novel.id }}/sections">{{ novel.name }}</a></td>
                                         <td>{{ novel.author }}</td>
+                                        <td><a href="{{ novel.url }}">{{ novel.url }}</a></td>
                                         <td>{{ novel.novel_sections.count() }}</td>
                                         <td><label class="label label-primary">{{ novel.read_num }}</label></td>
                                     </tr>
                                         {% endfor %}
                                         <tr>
-                                            <td colspan="5">{{ pagination(data['current_page'], data['total_page'], data['base_url'], 4) }}</td>
+                                            <td colspan="7">{{ pagination(data['current_page'], data['total_page'], data['base_url'], 4) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

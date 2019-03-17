@@ -1,0 +1,82 @@
+{% extends "login_base.html" %}
+{% block title %}个人小说网--小说管理{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    function add_novel_section() {
+        let section_title = $("#section_title");
+        let section_content = $("#section_content");
+        let novel_id = $("#novel_id");
+        let section_url = $("#section_url");
+        if (section_title.val().trim() == '' || section_content.val().trim() == '') {
+            alert('标题或者内容不能为空！');
+            return false;
+        } else {
+            $.post("/admin/novel/"+ novel_id.val()+"/addsection", {
+                section_title: section_title.val().trim(),
+                section_content: section_content.val(),
+                section_url: section_url.val().trim()
+            }, function(data) {
+               if (data == 'error') {
+                   alert('添加章节失败！');
+                   return false;
+               } else if (data == 'success') {
+                   alert('添加章节成功！');
+                   window.location.href = "/admin/novel/" + novel_id.val() + "/sections";
+                   return true;
+               }
+            });
+        }
+        return true;
+    }
+</script>
+{% endblock %}
+{% block content %}
+ <div class="container">
+     <div class="row">
+         <div class="col-md-12">
+             &nbsp;&nbsp;
+         </div>
+     </div>
+     <div class="row">
+         <div class="col-md-12">
+             <div class="panel panel-info">
+                 <div class="panel-heading">添加章节</div>
+                 <div class="panel-body">
+                     <div class="row">
+                         <div class="col-md-12" style="text-align: center;color:red; font-size: x-large;">
+                             <strong>{{ data['novel'].name }}</strong>
+                         </div>
+                     </div>
+                     <div class="row">
+                         <div class="col-md-12">
+                             <div class="panel panel-success" style="margin: 50px;">
+                                 <div class="panel-body">
+                                     <form>
+                                         <div class="form-group">
+                                             <label for="section_title">章节标题</label>
+                                             <input type="text" class="form-control" placeholder="标题" id="section_title"/>
+                                             <input type="hidden" value="{{ data['novel'].id }}" id="novel_id" />
+                                         </div>
+                                         <div class="form-group">
+                                             <label for="section_url">来源链接</label>
+                                             <input type="text" class="form-control" placeholder="URL" id="section_url"/>
+                                         </div>
+                                         <div class="form-group">
+                                             <label for="section_content">内容</label>
+                                             <textarea class="form-control" rows="10" id="section_content"></textarea>
+                                         </div>
+                                         <a type="button" class="btn btn-info" onclick="add_novel_section();" href="javascript: void(0);">添加章节</a>
+                                     </form>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+ </div>
+{{ super() }}
+{% endblock %}
