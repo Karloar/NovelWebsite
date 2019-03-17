@@ -37,6 +37,7 @@
                                         <th>ID</th>
                                         <th>标题名称</th>
                                         <th>来源链接</th>
+                                        <th>操作</th>
                                     </tr>
                                         {% for section in data['sections'] %}
                                     <tr>
@@ -44,6 +45,7 @@
                                         <td><label>{{ section.id }}</label></td>
                                         <td><a href="/detail/{{ section.id }}">{{ section.title }}</a></td>
                                         <td><a href="{{ section.url }}">{{ section.url }}</a></td>
+                                        <td><a href="/admin/novel/updateSection/{{ section.id }}" type="button" class="btn btn-info">修改</a></td>
                                     </tr>
                                         {% endfor %}
                                     </tbody>

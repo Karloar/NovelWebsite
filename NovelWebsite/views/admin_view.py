@@ -197,3 +197,39 @@ def admin_add_novel_section(novel_id):
     finally:
         db.session.remove()
     return "success"
+
+
+@admin_view.route("/admin/novel/updateSection/<int:section_id>", methods=['GET', 'POST'])
+def update_novel_section(section_id):
+    if 'user' not in session or session['user']['name'].lower() != 'admin':
+        return redirect("/")
+    data = dict()
+    data['user'] = session['user']
+    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    if request.method == 'GET':
+        data['section'] = db.session.query(NovelSection).filter(NovelSection.id == section_id).one()
+        data['section'].content = "\n".join(data['section'].content.split("<br />"))
+        getattr(data['section'], 'novel_title', None)
+        db.session.remove()
+        return render_template("admin_update_novel_section.html", data=data)
+    section_title = request.form.get("section_title", None)
+    section_content = request.form.get("section_content", None)
+    section_url = request.form.get("section_url", None)
+    if not section_title or not section_content:
+        return "error"
+    section_content = '<br />'.join([x.strip() for x in section_content.split("\n")])
+    try:
+        db.session.query(NovelSection).filter(NovelSection.id == section_id).update(
+            {
+                NovelSection.title: section_title,
+                NovelSection.content: section_content,
+                NovelSection.url: section_url
+            }
+        )
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return "error"
+    finally:
+        db.session.remove()
+    return "success"

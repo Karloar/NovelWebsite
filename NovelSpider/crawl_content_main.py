@@ -14,5 +14,5 @@ if __name__ == '__main__':
         CrawlNovelSectionThread(
             novel_title_list,
             lock=True,
-            ignore_list=[35, 77, 93, 181, 270, 261]
+            ignore_list=[77, 93, 181, 270, 261]
         ).start()
