@@ -143,7 +143,7 @@ def detail(section_id):
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
     data['section'] = db.session.query(NovelSection).filter(NovelSection.id == section_id).one()
     data['content'] = [
-        x.strip() for x in data['section'].content.split('<br />') if x.strip() and (
+        x.strip() for x in data['section'].content.split('<br />') if (
                 "http://www.shuquge.com/" not in x and "请记住本书首发域名" not in x
         )
     ]

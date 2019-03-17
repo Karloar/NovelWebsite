@@ -152,7 +152,7 @@ def get_section_content_from_url(section_url):
     resp.encoding = "utf-8"
     selector = etree.HTML(resp.text)
     contents = selector.xpath('//*[@id="content"]/text()')
-    contents = [html.escape(x).strip() for x in contents if x.strip()]
+    contents = [html.escape(x).strip() for x in contents]
     return '<br />'.join(contents)
 
 
