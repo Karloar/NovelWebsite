@@ -43,7 +43,6 @@
       }
 
       function init_chart(div, category_id) {
-          console.log(div);
           let mychart = echarts.init(div);
           $.post("/admin/statistic/data/" + category_id, function(data) {
               let novel_names = new Array();
