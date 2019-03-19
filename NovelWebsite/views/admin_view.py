@@ -159,6 +159,9 @@ def admin_novel_sections(novel_id):
     data = dict()
     data['user'] = session['user']
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    data['novel_title'] = db.session.query(NovelTitle).filter(
+        NovelTitle.id == novel_id
+    ).one()
     data['sections'] = db.session.query(NovelSection).filter(
         NovelSection.novel_id == novel_id
     ).order_by(NovelSection.id.desc())
