@@ -10,6 +10,55 @@
      </div>
      <div class="row">
          <div class="col-md-12">
+             <div class="panel panel-success">
+                 <div class="panel-heading">
+                     <div class="row">
+                         <div class="col-md-11">
+                             最新添加小说
+                         </div>
+                         <div class="col-md-1">
+                             <a type="button" class="btn btn-success btn-sm" href="/admin/addnovel">添加小说</a>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="panel-body">
+                     <div class="row">
+                         <div class="col-md-12">
+                             <div class="panel panel-warning">
+                                 <table class="table table-condensed table-hover">
+                        <tbody>
+                        <tr>
+                            <th>序号</th>
+                            <th>ID</th>
+                            <th>小说名称</th>
+                            <th>作者</th>
+                            <th>爬取链接</th>
+                            <th>章节数</th>
+                            <th>热度</th>
+                        </tr>
+                            {% for novel in data['current_novels'] %}
+                        <tr>
+                            <td><label>{{ loop.index }}</label></td>
+                            <td><label>{{ novel.id }}</label></td>
+                            <td><a href="/admin/novel/{{ novel.id }}/sections">{{ novel.name }}</a></td>
+                            <td>{{ novel.author }}</td>
+                            <td><a href="{{ novel.url }}">{{ novel.url }}</a></td>
+                            <td>{{ novel.novel_sections.count() }}</td>
+                            <td><label class="label label-primary">{{ novel.read_num }}</label></td>
+                        </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+     <div class="row">
+         <div class="col-md-12">
              <div class="panel panel-info">
                  <div class="panel-heading">小说列表</div>
                  <div class="panel-body">

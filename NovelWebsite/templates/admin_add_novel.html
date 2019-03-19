@@ -1,0 +1,77 @@
+{% extends "login_base.html" %}
+{% block title %}小说阅读网站--小说管理{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    function add_novel() {
+        let novel_title = $("#novel_title");
+        let novel_author = $("#novel_author");
+        let novel_type = $("#novel_type");
+        if (novel_title.val() == '' || novel_author.val() == '' || novel_type.val() == '') {
+            alert('小说标题、类别以及作者不能为空！');
+            return false;
+        }
+        return true;
+    }
+</script>
+{% endblock %}
+{% block content %}
+ <div class="container">
+     <div class="row">
+         <div class="col-md-12">
+             &nbsp;&nbsp;
+         </div>
+     </div>
+     <div class="row">
+         <div class="col-md-12">
+             <div class="panel panel-info">
+                 <div class="panel-heading">添加小说</div>
+                 <div class="panel-body">
+                     <div class="row">
+                         <div class="col-md-12">
+                             <div class="panel panel-success" style="margin: 10px;">
+                                 <div class="panel-body">
+                                     <form enctype="multipart/form-data" method="POST" action="/admin/addnovel">
+                                         <div class="form-group">
+                                             <label for="novel_title">小说名称</label>
+                                             <input type="text" class="form-control" placeholder="名称" id="novel_title" name="novel_title"/>
+                                         </div>
+                                         <div class="form-group">
+                                             <label for="novel_type">小说类别</label>
+                                             <select id="novel_type" name="novel_type" class="form-control">
+                                                 <option value=""></option>
+                                                 {% for novel_type in data['type_list'] %}
+                                                 <option value="{{ novel_type.id }}">{{ novel_type.name }}</option>
+                                                 {% endfor %}
+                                             </select>
+                                         </div>
+                                         <div class="form-group">
+                                             <label for="novel_url">来源链接</label>
+                                             <input type="text" class="form-control" placeholder="URL" id="novel_url" name="novel_url"/>
+                                         </div>
+                                         <div class="form-group">
+                                             <label for="novel_author">作者</label>
+                                             <input type="text" class="form-control" placeholder="作者" id="novel_author" name="novel_author"/>
+                                         </div>
+                                         <div class="form-group">
+                                             <label for="novel_introduction">简介</label>
+                                             <textarea class="form-control" rows="5" id="novel_introduction" name="novel_introduction"></textarea>
+                                         </div>
+                                         <div class="form-group">
+                                             <label for="novel_cover">封面</label>
+                                             <input type="file" id="novel_cover" name="novel_cover"/>
+                                         </div>
+                                         <button type="submit" class="btn btn-info" onclick="return add_novel();">添加小说</button>
+                                     </form>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+ </div>
+{{ super() }}
+{% endblock %}

@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint
 from flask import request
 from flask import session
@@ -75,6 +76,9 @@ def admin_novels(page=1):
     data['novels'] = db.session.query(NovelTitle).order_by(
         NovelTitle.id.asc()
     ).offset((page - 1) * per_page).limit(per_page)
+    data['current_novels'] = db.session.query(NovelTitle).order_by(
+        NovelTitle.id.desc()
+    ).limit(3)
     novels_num = db.session.query(NovelTitle).count()
     data['total_page'] = novels_num // per_page if novels_num % per_page == 0 else novels_num // per_page + 1
     db.session.remove()
@@ -98,6 +102,9 @@ def admin_novels_order_by_section_num(page=1):
         db.func.count(NovelSection.id).desc(),
         NovelTitle.id.asc()
     ).offset((page - 1) * per_page).limit(per_page)
+    data['current_novels'] = db.session.query(NovelTitle).order_by(
+        NovelTitle.id.desc()
+    ).limit(3)
     novels_num = db.session.query(NovelTitle).count()
     data['total_page'] = novels_num // per_page if novels_num % per_page == 0 else novels_num // per_page + 1
     db.session.remove()
@@ -119,6 +126,9 @@ def admin_novels_order_by_heat(page=1):
         NovelTitle.read_num.desc(),
         NovelTitle.id.asc()
     ).offset((page - 1) * per_page).limit(per_page)
+    data['current_novels'] = db.session.query(NovelTitle).order_by(
+        NovelTitle.id.desc()
+    ).limit(3)
     novels_num = db.session.query(NovelTitle).count()
     data['total_page'] = novels_num // per_page if novels_num % per_page == 0 else novels_num // per_page + 1
     db.session.remove()
@@ -236,3 +246,49 @@ def update_novel_section(section_id):
     finally:
         db.session.remove()
     return "success"
+
+
+@admin_view.route("/admin/addnovel", methods=['GET', 'POST'])
+def admin_add_novel():
+    if 'user' not in session or session['user']['name'].lower() != 'admin':
+        return redirect("/")
+    data = dict()
+    data['user'] = session['user']
+    data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
+    if request.method == 'GET':
+        return render_template("admin_add_novel.html", data=data)
+    novel_title = request.form.get("novel_title", None)
+    novel_url = request.form.get("novel_url", None)
+    novel_author = request.form.get("novel_author", None)
+    novel_introduction = request.form.get("novel_introduction", None)
+    novel_cover = request.files.get("novel_cover", None)
+    novel_type = request.form.get("novel_type", None)
+    try:
+        novel = NovelTitle(
+            name=novel_title.strip(),
+            author=novel_author.strip(),
+            url=novel_url.strip() if novel_url.strip() else None,
+            introduction=novel_introduction,
+            type_id=int(novel_type)
+        )
+        db.session.add(novel)
+        db.session.commit()
+        if novel_cover:
+            novel_cover_ext = novel_cover.filename.rsplit(".", maxsplit=1)[-1]
+            cover_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                'static',
+                'img',
+                'cover',
+                '{0}.{1}'.format(novel.id, novel_cover_ext)
+            )
+            novel_cover.save(cover_path)
+            novel.cover = '/static/img/cover/{0}.{1}'.format(novel.id, novel_cover_ext)
+            db.session.query(NovelTitle).filter(NovelTitle.id == novel.id).update({NovelTitle.cover: novel.cover})
+            db.session.commit()
+    except Exception as e:
+        print(e)
+        return redirect(request.url)
+    finally:
+        db.session.remove()
+    return redirect("/admin/novels")
