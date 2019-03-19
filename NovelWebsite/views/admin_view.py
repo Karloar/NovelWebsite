@@ -169,9 +169,10 @@ def admin_novel_sections(novel_id):
     data = dict()
     data['user'] = session['user']
     data['type_list'] = db.session.query(NovelType).order_by(NovelType.id)
-    data['novel_title'] = db.session.query(NovelTitle).filter(
+    data['novel'] = db.session.query(NovelTitle).filter(
         NovelTitle.id == novel_id
     ).one()
+    getattr(data['novel'], 'novel_type')
     data['sections'] = db.session.query(NovelSection).filter(
         NovelSection.novel_id == novel_id
     ).order_by(NovelSection.id.desc())
@@ -268,7 +269,7 @@ def admin_add_novel():
             name=novel_title.strip(),
             author=novel_author.strip(),
             url=novel_url.strip() if novel_url.strip() else None,
-            introduction=novel_introduction,
+            introduction='<br />'.join(novel_introduction.split('\n')) if novel_introduction else None,
             type_id=int(novel_type)
         )
         db.session.add(novel)
@@ -283,7 +284,7 @@ def admin_add_novel():
                 '{0}.{1}'.format(novel.id, novel_cover_ext)
             )
             novel_cover.save(cover_path)
-            novel.cover = '/static/img/cover/{0}.{1}'.format(novel.id, novel_cover_ext)
+            novel.cover = '/static/img/cover/0}.{1}'.format(novel.id, novel_cover_ext)
             db.session.query(NovelTitle).filter(NovelTitle.id == novel.id).update({NovelTitle.cover: novel.cover})
             db.session.commit()
     except Exception as e:

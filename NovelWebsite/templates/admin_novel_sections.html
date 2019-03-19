@@ -13,20 +13,42 @@
              &nbsp;&nbsp;
          </div>
      </div>
+
      <div class="row">
          <div class="col-md-12">
              <div class="panel panel-info">
                  <div class="panel-heading">
                      <div class="row">
                          <div class="col-md-11">
-                             {{ data['novel_title'].name }}
+                             {{ data['novel'].name }}
                          </div>
                          <div class="col-md-1">
-                             <a type="button" class="btn btn-success btn-sm" href="/admin/novel/{{ data['novel_title'].id }}/addsection">添加章节</a>
+                             <a type="button" class="btn btn-success btn-sm" href="/admin/novel/{{ data['novel'].id }}/addsection">添加章节</a>
                          </div>
                      </div>
                  </div>
                  <div class="panel-body">
+                     <div class="row">
+                         <div class="col-md-12">
+                             <div class="panel panel-success">
+                                <div class="panel-body">
+                                    <div class="col-md-2">
+                                        <img src="{{ data['novel'].cover }}" alt="{{ data['novel'].title_name }}" class="img-rounded" style="width:134px; height:164px;">
+                                    </div>
+                                    <div class="col-md-10">
+                                        <dl>
+                                            <dt style="font-size: 20px;">{{ data['novel'].title_name }}</dt>
+                                            <dd style="font-size: 15px;">作者：{{ data['novel'].author }}</dd>
+                                            <dd style="font-size: 15px;">分类：{{ data['novel'].novel_type.name }}</dd>
+                                            <dd style="font-size: 15px;">简介：{{ data['novel'].introduction | safe if data['novel'].introduction }}</dd>
+                                            <dd style="font-size: 15px;">&nbsp;</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+
+                            </div>
+                         </div>
+                     </div>
                      <div class="row">
                         <div class="col-md-12">
                             <div class="panel panel-success">

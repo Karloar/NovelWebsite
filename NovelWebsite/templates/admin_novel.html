@@ -42,7 +42,7 @@
                             <td><label>{{ novel.id }}</label></td>
                             <td><a href="/admin/novel/{{ novel.id }}/sections">{{ novel.name }}</a></td>
                             <td>{{ novel.author }}</td>
-                            <td><a href="{{ novel.url }}">{{ novel.url }}</a></td>
+                            <td>{% if novel.url %}<a href="{{ novel.url }}">{{ novel.url }}</a>{% endif %}</td>
                             <td>{{ novel.novel_sections.count() }}</td>
                             <td><label class="label label-primary">{{ novel.read_num }}</label></td>
                         </tr>
@@ -92,7 +92,7 @@
                                         <td><label>{{ novel.id }}</label></td>
                                         <td><a href="/admin/novel/{{ novel.id }}/sections">{{ novel.name }}</a></td>
                                         <td>{{ novel.author }}</td>
-                                        <td><a href="{{ novel.url }}">{{ novel.url }}</a></td>
+                                        <td>{% if novel.url %}<a href="{{ novel.url }}">{{ novel.url }}</a>{% endif %}</td>
                                         <td>{{ novel.novel_sections.count() }}</td>
                                         <td><label class="label label-primary">{{ novel.read_num }}</label></td>
                                     </tr>
