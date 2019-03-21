@@ -7,8 +7,8 @@ from NovelSpider.utils import db
 
 
 title_url = 'http://www.shuquge.com/txt/5809/index.html'
-title_url = 'http://www.shuquge.com/txt/83108/index.html'
-title_url = 'http://www.shuquge.com/txt/83133/index.html'
+# title_url = 'http://www.shuquge.com/txt/83108/index.html'
+# title_url = 'http://www.shuquge.com/txt/83133/index.html'
 
 
 def crawl_by_title_url(title_url):

@@ -45,6 +45,11 @@
         }
     }
     document.onkeydown = change_page_by_keyboard;
+    function content_dblclick() {
+        var next_page = $("#next_page");
+        window.location.href = next_page.attr("href");
+    }
+
 </script>
 {% endblock %}
 {% block content %}
@@ -131,7 +136,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="panel panel-success" style="margin: 15px;">
-                                <div class="panel-body" style="{{ data['content_style_str'] if data['content_style_str'] else 'font-size: 15pt' }}" id="section_content">
+                                <div class="panel-body" style="{{ data['content_style_str'] if data['content_style_str'] else 'font-size: 15pt' }}" id="section_content" ondblclick="content_dblclick();">
                                     {% for row in data['content'] %}
                                     &nbsp;&nbsp;&nbsp;&nbsp;{{ row }}<br />
                                     {% endfor %}
